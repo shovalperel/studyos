@@ -2507,6 +2507,13 @@ function signOut() {
   document.body.style.overflow='';
 }
 
+// Panel switcher
+function showAuthPanel(panel) {
+  document.getElementById('auth-home').style.display   = panel==='home'   ? 'block' : 'none';
+  document.getElementById('auth-signup').style.display = panel==='signup' ? 'block' : 'none';
+  document.getElementById('auth-login').style.display  = panel==='login'  ? 'block' : 'none';
+}
+
 // Wire submit buttons
 document.getElementById('su-submit').addEventListener('click', handleSignup);
 document.getElementById('li-submit').addEventListener('click', handleLogin);
