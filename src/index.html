@@ -726,6 +726,13 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
 .wt-btn-next.finish:hover { background: #15803d; }
 
 </style>
+.g-signin-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text);transition:all .15s;margin-bottom:4px;}
+.g-signin-btn:hover{border-color:#4285f4;background:#f0f4ff;}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
+.auth-divider span{font-size:11px;color:var(--text-3);white-space:nowrap;}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+</style>
+<script src="https://accounts.google.com/gsi/client" async></script>
 </head>
 <body>
 
