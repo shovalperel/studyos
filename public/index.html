@@ -2450,10 +2450,14 @@ window.addEventListener('load', initGoogleSignIn);
 
 // ── AUTH SYSTEM ───────────────────────────────────────────────────────────────
 
-async function hashPassword(password) {
-  const data = new TextEncoder().encode(password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+function hashPassword(password) {
+  // Simple deterministic hash — consistent across sessions on same device
+  var h = 0x811c9dc5;
+  for (var i = 0; i < password.length; i++) {
+    h ^= password.charCodeAt(i);
+    h = (h * 0x01000193) >>> 0;
+  }
+  return h.toString(16) + btoa(password.split('').reverse().join('')).replace(/=/g,'');
 }
 
 function getUsers() { return JSON.parse(safeGet('sos_users','[]')||'[]'); }
@@ -2462,40 +2466,36 @@ function getSession() { try { return JSON.parse(localStorage.getItem('sos_sessio
 function saveSession(u) { localStorage.setItem('sos_session', JSON.stringify({id:u.id,name:u.name,email:u.email})); }
 function clearSession() { localStorage.removeItem('sos_session'); }
 
-async function handleSignup() {
-  const name  = document.getElementById('su-name').value.trim();
-  const email = document.getElementById('su-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('su-password').value;
-  const err   = document.getElementById('su-error');
+function handleSignup() {
+  var name  = document.getElementById('su-name').value.trim();
+  var email = document.getElementById('su-email').value.trim().toLowerCase();
+  var pass  = document.getElementById('su-password').value;
+  var err   = document.getElementById('su-error');
   err.style.display = 'none';
-  if (!name||!email||!pass)          { err.textContent='Please fill in all fields.';              err.style.display='block'; return; }
-  if (pass.length < 8)               { err.textContent='Password must be at least 8 characters.'; err.style.display='block'; return; }
-  if (!/\S+@\S+\.\S+/.test(email))   { err.textContent='Please enter a valid email.';             err.style.display='block'; return; }
-  const users = getUsers();
-  if (users.find(u=>u.email===email)) { err.textContent='An account with this email already exists.'; err.style.display='block'; return; }
-  const passwordHash = await hashPassword(pass);
-  const newUser = { id: Date.now().toString(), name, email, passwordHash, createdAt: new Date().toISOString() };
+  if (!name||!email||!pass)           { err.textContent='Please fill in all fields.';              err.style.display='block'; return; }
+  if (pass.length < 8)                { err.textContent='Password must be at least 8 characters.'; err.style.display='block'; return; }
+  if (!/\S+@\S+\.\S+/.test(email))    { err.textContent='Please enter a valid email.';             err.style.display='block'; return; }
+  var users = getUsers();
+  if (users.find(function(u){return u.email===email;})) { err.textContent='An account with this email already exists.'; err.style.display='block'; return; }
+  var newUser = { id: Date.now().toString(), name: name, email: email, passwordHash: hashPassword(pass), createdAt: new Date().toISOString() };
   users.push(newUser);
   saveUsers(users);
   saveSession(newUser);
   if (!profileData.name || profileData.name==='Shoval') { profileData.name=name; saveProfileData(); }
-  closeM('signup');
   goApp(true);
 }
 
-async function handleLogin() {
-  const email = document.getElementById('li-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('li-password').value;
-  const err   = document.getElementById('li-error');
+function handleLogin() {
+  var email = document.getElementById('li-email').value.trim().toLowerCase();
+  var pass  = document.getElementById('li-password').value;
+  var err   = document.getElementById('li-error');
   err.style.display = 'none';
   if (!email||!pass) { err.textContent='Please fill in all fields.'; err.style.display='block'; return; }
-  const users = getUsers();
-  const user  = users.find(u=>u.email===email);
+  var users = getUsers();
+  var user  = users.find(function(u){return u.email===email;});
   if (!user) { err.textContent='No account found with this email.'; err.style.display='block'; return; }
-  const passwordHash = await hashPassword(pass);
-  if (user.passwordHash !== passwordHash) { err.textContent='Incorrect password.'; err.style.display='block'; return; }
+  if (user.passwordHash !== hashPassword(pass)) { err.textContent='Incorrect password.'; err.style.display='block'; return; }
   saveSession(user);
-  closeM('login');
   goApp(false);
 }
 
