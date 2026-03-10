@@ -2393,17 +2393,77 @@ document.getElementById('profile-edit-modal').addEventListener('click',function(
 
 
 // SIGN UP
-function openSignupModal(){ document.getElementById('signup-modal').classList.add('open'); }
-function closeSignupModal(){ document.getElementById('signup-modal').classList.remove('open'); }
-function handleSignup(){
-  const name=document.getElementById('su-name').value.trim();
-  const email=document.getElementById('su-email').value.trim();
-  const pass=document.getElementById('su-password').value;
-  if(!name||!email||!pass){ alert('Please fill in all fields'); return; }
-  if(pass.length<8){ alert('Password must be at least 8 characters'); return; }
-  closeSignupModal();
-  if(!profileData.name){ profileData.name=name; saveProfileData(); renderProfile(); }
+// ── AUTH SYSTEM ───────────────────────────────────────────────────────────────
+
+async function hashPassword(password) {
+  const data = new TextEncoder().encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
+
+function getUsers() { return JSON.parse(safeGet('sos_users','[]')||'[]'); }
+function saveUsers(u) { safeSet('sos_users', JSON.stringify(u)); }
+function getSession() { try { return JSON.parse(localStorage.getItem('sos_session')); } catch(e) { return null; } }
+function saveSession(u) { localStorage.setItem('sos_session', JSON.stringify({id:u.id,name:u.name,email:u.email})); }
+function clearSession() { localStorage.removeItem('sos_session'); }
+
+async function handleSignup() {
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('su-password').value;
+  const err   = document.getElementById('su-error');
+  err.style.display = 'none';
+  if (!name||!email||!pass)          { err.textContent='Please fill in all fields.';              err.style.display='block'; return; }
+  if (pass.length < 8)               { err.textContent='Password must be at least 8 characters.'; err.style.display='block'; return; }
+  if (!/\S+@\S+\.\S+/.test(email))   { err.textContent='Please enter a valid email.';             err.style.display='block'; return; }
+  const users = getUsers();
+  if (users.find(u=>u.email===email)) { err.textContent='An account with this email already exists.'; err.style.display='block'; return; }
+  const passwordHash = await hashPassword(pass);
+  const newUser = { id: Date.now().toString(), name, email, passwordHash, createdAt: new Date().toISOString() };
+  users.push(newUser);
+  saveUsers(users);
+  saveSession(newUser);
+  if (!profileData.name || profileData.name==='Shoval') { profileData.name=name; saveProfileData(); }
+  closeM('signup');
+  goApp(true);
+}
+
+async function handleLogin() {
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('li-password').value;
+  const err   = document.getElementById('li-error');
+  err.style.display = 'none';
+  if (!email||!pass) { err.textContent='Please fill in all fields.'; err.style.display='block'; return; }
+  const users = getUsers();
+  const user  = users.find(u=>u.email===email);
+  if (!user) { err.textContent='No account found with this email.'; err.style.display='block'; return; }
+  const passwordHash = await hashPassword(pass);
+  if (user.passwordHash !== passwordHash) { err.textContent='Incorrect password.'; err.style.display='block'; return; }
+  saveSession(user);
+  closeM('login');
+  goApp(false);
+}
+
+function signOut() {
+  clearSession();
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('landing-screen').style.display='flex';
+  document.body.style.overflow='';
+}
+
+// Wire submit buttons
+document.getElementById('su-submit').addEventListener('click', handleSignup);
+document.getElementById('li-submit').addEventListener('click', handleLogin);
+
+// Allow Enter key in auth forms
+['su-name','su-email','su-password'].forEach(id=>{ var el=document.getElementById(id); if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter')handleSignup();}); });
+['li-email','li-password'].forEach(id=>{ var el=document.getElementById(id); if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();}); });
+
+// Auto-login if session exists
+(function() {
+  const session = getSession();
+  if (session) { goApp(false); }
+})();
 
 // LANDING -> APP
 function goApp(isSignup){
