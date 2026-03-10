@@ -1,5 +1,5 @@
 // Watches C:\Users\Shoval\Downloads\index.html
-// On every save → copies → injects → git commit + push → Netlify auto-deploys
+// On every save → copies → git commit + push → GitHub Actions deploys to Pages
 
 const chokidar = require('chokidar');
 const { execSync } = require('child_process');
@@ -16,14 +16,14 @@ function run(cmd) {
 
 function deploy() {
   const t = new Date().toLocaleTimeString();
-  console.log(`\n[${t}] Change detected — building and pushing...`);
+  console.log(`\n[${t}] Change detected — pushing to GitHub...`);
   try {
     fs.copyFileSync(SRC, SRC_DEST);
     run('node inject.js');
     run('git add src/index.html public/index.html');
     run(`git commit -m "Update HTML - ${new Date().toISOString()}"`);
     run(`git push https://${cfg.githubToken}@github.com/shovalperel/studyos.git main`);
-    console.log(`[${new Date().toLocaleTimeString()}] ✓ Pushed to https://github.com/shovalperel/studyos`);
+    console.log(`[${new Date().toLocaleTimeString()}] ✓ Pushed — GitHub is deploying to https://shovalperel.github.io/studyos`);
   } catch (e) {
     console.error('Failed:', e.message);
   }
@@ -35,4 +35,4 @@ chokidar.watch(SRC, {
 }).on('change', deploy);
 
 console.log('[Watcher] Watching:', SRC);
-console.log('[Watcher] Every save → auto-commits to https://github.com/shovalperel/studyos');
+console.log('[Watcher] Every save → auto-deploys to https://shovalperel.github.io/studyos');
