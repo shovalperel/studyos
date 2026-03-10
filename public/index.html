@@ -737,8 +737,10 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
 <body>
 
 <!-- ── LANDING SCREEN ─────────────────────────────────────────── -->
-<div id="landing-screen" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;flex-direction:column;">
-  <div style="width:100%;max-width:400px;text-align:center;">
+<div id="landing-screen" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;">
+
+  <!-- Home panel -->
+  <div id="auth-home" style="width:100%;max-width:400px;text-align:center;">
     <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;">
       <div style="width:48px;height:48px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;">
         <svg viewBox="0 0 36 36" fill="none" width="28" height="28"><rect width="36" height="36" rx="10" fill="#0d7a6b"/><rect x="10" y="10" width="7" height="7" rx="2" fill="white"/><rect x="19" y="10" width="7" height="7" rx="2" fill="white" opacity="0.5"/><rect x="10" y="19" width="7" height="7" rx="2" fill="white" opacity="0.5"/><rect x="19" y="19" width="7" height="7" rx="2" fill="white"/></svg>
@@ -747,10 +749,50 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
     </div>
     <h1 style="font-size:30px;font-weight:800;color:var(--text);letter-spacing:-.6px;margin-bottom:12px;line-height:1.2;">Your semester,<br>organized.</h1>
     <p style="font-size:14px;color:var(--text-2);margin-bottom:40px;line-height:1.6;">Track courses, assignments, and study<br>sessions — all in one place.</p>
-    <button data-modal="signup" style="width:100%;padding:15px;border-radius:12px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:background .15s;box-shadow:0 4px 16px rgba(13,122,107,.25);">Get Started — It's Free</button>
-    <button data-modal="login" style="width:100%;padding:15px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;">Sign In</button>
+    <button onclick="showAuthPanel('signup')" style="width:100%;padding:15px;border-radius:12px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:background .15s;box-shadow:0 4px 16px rgba(13,122,107,.25);">Get Started — It's Free</button>
+    <button onclick="showAuthPanel('login')" style="width:100%;padding:15px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;">Sign In</button>
     <p style="margin-top:28px;font-size:11px;color:var(--text-3);">Your data is stored securely on your device.</p>
   </div>
+
+  <!-- Sign Up panel -->
+  <div id="auth-signup" style="display:none;width:100%;max-width:400px;">
+    <button onclick="showAuthPanel('home')" style="background:none;border:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-3);cursor:pointer;margin-bottom:20px;padding:0;">← Back</button>
+    <h2 style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.4px;">Create Account</h2>
+    <p style="font-size:13px;color:var(--text-3);margin-bottom:24px;">Join StudyOS for free</p>
+    <button class="g-signin-btn" onclick="googleSignIn()" style="margin-bottom:16px;">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or sign up with email</span></div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+      <input id="su-name"     type="text"     placeholder="Full name"         autocomplete="name"         style="padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;">
+      <input id="su-email"    type="email"    placeholder="Email address"     autocomplete="email"        style="padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;">
+      <input id="su-password" type="password" placeholder="Password (min 8)"  autocomplete="new-password" style="padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;">
+    </div>
+    <div id="su-error" style="display:none;color:var(--red);font-size:12px;padding:10px 12px;background:var(--red-light);border-radius:8px;margin-bottom:12px;"></div>
+    <button id="su-submit" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;">Create Account</button>
+    <p style="text-align:center;font-size:13px;color:var(--text-3);">Already have an account? <a href="#" onclick="showAuthPanel('login');return false;" style="color:var(--accent);font-weight:600;">Sign in</a></p>
+  </div>
+
+  <!-- Sign In panel -->
+  <div id="auth-login" style="display:none;width:100%;max-width:400px;">
+    <button onclick="showAuthPanel('home')" style="background:none;border:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-3);cursor:pointer;margin-bottom:20px;padding:0;">← Back</button>
+    <h2 style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.4px;">Welcome Back</h2>
+    <p style="font-size:13px;color:var(--text-3);margin-bottom:24px;">Sign in to your account</p>
+    <button class="g-signin-btn" onclick="googleSignIn()" style="margin-bottom:16px;">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or sign in with email</span></div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+      <input id="li-email"    type="email"    placeholder="Email address" autocomplete="email"            style="padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;">
+      <input id="li-password" type="password" placeholder="Password"      autocomplete="current-password" style="padding:13px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;">
+    </div>
+    <div id="li-error" style="display:none;color:var(--red);font-size:12px;padding:10px 12px;background:var(--red-light);border-radius:8px;margin-bottom:12px;"></div>
+    <button id="li-submit" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;">Sign In</button>
+    <p style="text-align:center;font-size:13px;color:var(--text-3);">No account? <a href="#" onclick="showAuthPanel('signup');return false;" style="color:var(--accent);font-weight:600;">Sign up</a></p>
+  </div>
+
 </div>
 
 <!-- ── APP (hidden until authenticated) ──────────────────────── -->
