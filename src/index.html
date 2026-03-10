@@ -1330,6 +1330,54 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
     </div>
   </div>
 </div>
+</div><!-- /app-screen -->
+
+<!-- ── AUTH MODALS ────────────────────────────────────────────── -->
+<div id="modal-signup" class="modal-backdrop" data-overlay="signup" style="align-items:center;z-index:1100;">
+  <div class="modal" style="border-radius:20px;max-width:380px;padding:28px 24px 24px;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Create Account</div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl">Full Name</label>
+      <input id="su-name" type="text" placeholder="e.g. Shoval" autocomplete="name">
+    </div></div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl">Email</label>
+      <input id="su-email" type="email" placeholder="you@example.com" autocomplete="email">
+    </div></div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl">Password</label>
+      <input id="su-password" type="password" placeholder="Min 8 characters" autocomplete="new-password">
+    </div></div>
+    <div id="su-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none;padding:8px 10px;background:var(--red-light);border-radius:8px;"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" data-close="signup">Cancel</button>
+      <button class="btn-save" id="su-submit">Create Account</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:16px;">Already have an account? <a href="#" style="color:var(--accent);font-weight:600;" data-switch="signup,login">Sign in</a></p>
+  </div>
+</div>
+
+<div id="modal-login" class="modal-backdrop" data-overlay="login" style="align-items:center;z-index:1100;">
+  <div class="modal" style="border-radius:20px;max-width:380px;padding:28px 24px 24px;">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Welcome Back</div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl">Email</label>
+      <input id="li-email" type="email" placeholder="you@example.com" autocomplete="email">
+    </div></div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl">Password</label>
+      <input id="li-password" type="password" placeholder="Your password" autocomplete="current-password">
+    </div></div>
+    <div id="li-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none;padding:8px 10px;background:var(--red-light);border-radius:8px;"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" data-close="login">Cancel</button>
+      <button class="btn-save" id="li-submit">Sign In</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:16px;">No account? <a href="#" style="color:var(--accent);font-weight:600;" data-switch="login,signup">Sign up</a></p>
+  </div>
+</div>
 
 <script>
 
