@@ -1477,7 +1477,10 @@ function openCourseModal(id){
   const dates = c?.dates || [];
   if(dates.length) dates.forEach(d => addDateEntry(d));
   else addDateEntry();
-  document.getElementById('course-modal').classList.add('open');
+  const el = document.getElementById('course-modal');
+  el.style.display = 'flex';
+  el.style.animation = 'none';
+  requestAnimationFrame(() => { el.style.animation = ''; });
 }
 
 function addDateEntry(data){
