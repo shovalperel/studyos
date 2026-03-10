@@ -2514,9 +2514,7 @@ function showAuthPanel(panel) {
   document.getElementById('auth-login').style.display  = panel==='login'  ? 'block' : 'none';
 }
 
-// Wire submit buttons
-document.getElementById('su-submit').addEventListener('click', handleSignup);
-document.getElementById('li-submit').addEventListener('click', handleLogin);
+// Wire submit buttons (buttons use onclick directly, no extra wiring needed)
 
 // Allow Enter key in auth forms
 ['su-name','su-email','su-password'].forEach(id=>{ var el=document.getElementById(id); if(el) el.addEventListener('keydown',function(e){if(e.key==='Enter')handleSignup();}); });
