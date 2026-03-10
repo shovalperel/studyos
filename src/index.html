@@ -1508,7 +1508,7 @@ function getDateEntries(){
   })).filter(d => d.date);
 }
 
-function closeCourseModal(){ document.getElementById('course-modal').classList.remove('open'); }
+function closeCourseModal(){ document.getElementById('course-modal').style.display='none'; }
 function saveCourse(){
   const name = document.getElementById('cm-name').value.trim();
   if(!name){ document.getElementById('cm-name').focus(); return; }
