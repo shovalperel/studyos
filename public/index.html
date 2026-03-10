@@ -2443,8 +2443,7 @@ function handleGoogleCredential(response) {
   }
   saveSession(user);
   if (!profileData.name || profileData.name === 'Shoval') { profileData.name = name; saveProfileData(); }
-  closeM('signup'); closeM('login');
-  goApp(!users.find(u => u.id === user.id && u !== user));
+  goApp(true);
 }
 
 window.addEventListener('load', initGoogleSignIn);
