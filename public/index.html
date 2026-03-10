@@ -2327,22 +2327,6 @@ document.getElementById('profile-edit-modal').addEventListener('click',function(
 
 
 // SIGN UP
-// ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────────
-// To enable Google Sign-In: set your Client ID from console.cloud.google.com
-const GOOGLE_CLIENT_ID = '';
-
-function initGoogleSignIn() {
-  if (!GOOGLE_CLIENT_ID || typeof google === 'undefined') return;
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential,
-    auto_select: false
-  });
-}
-
-function googleSignIn() {
-  if (!GOOGLE_CLIENT_ID) {
-    alert('Google Sign-In is not configured yet.\n\nTo enable it:\n1. Go to console.cloud.google.com\n2. Create OAuth credentials\n3. Add your Client ID to the GOOGLE_CLIENT_ID variable in the code.');
     return;
   }
   if (typeof google === 'undefined') { alert('Google Sign-In failed to load. Check your connection.'); return; }
