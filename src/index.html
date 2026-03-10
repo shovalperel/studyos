@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyOS — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f0f3f7;
+  --border: #e2e8f0;
+  --border-subtle: #edf1f7;
+  --text: #0d1b2a;
+  --text-2: #445566;
+  --text-3: #8899aa;
+  --accent: #0d7a6b;
+  --accent-hover: #0a6359;
+  --accent-light: #e8f5f3;
+  --accent-mid: #5bbcad;
+  --red: #dc2626; --red-light: #fef2f2;
+  --green: #16a34a; --green-light: #f0fdf4;
+  --amber: #d97706; --amber-light: #fffbeb;
+  --purple: #7c3aed; --purple-light: #f5f3ff;
+  --shadow-sm: 0 1px 4px rgba(13,27,42,.06), 0 1px 2px rgba(13,27,42,.04);
+  --shadow: 0 4px 16px rgba(13,27,42,.08), 0 1px 4px rgba(13,27,42,.04);
+  --shadow-lg: 0 12px 40px rgba(13,27,42,.12), 0 2px 8px rgba(13,27,42,.06);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-lg: 18px;
+}
+
+.sort-pill { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; padding:4px 11px; border-radius:16px; border:none; background:transparent; color:var(--text-3); cursor:pointer; transition:all .18s; }
+.sort-pill.sort-active { background:var(--surface); color:var(--accent); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+
+
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; -webkit-font-smoothing: antialiased; }
+
+/* ── WEBSITE LAYOUT ── */
+html, body { height: 100%; }
+.app-layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; height: 100vh;
+  z-index: 100; overflow-y: auto;
+  transition: width .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);
+  overflow-x: hidden;
+}
+.sidebar.collapsed { width: 0; border-right: none; }
+.main-content { margin-left: 240px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; transition: margin-left .25s cubic-bezier(.4,0,.2,1); }
+.main-content.expanded { margin-left: 0; }
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sidebar-logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sidebar-logo-mark svg { width: 18px; height: 18px; }
+.sidebar-logo-name { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.4px; }
+
+.sidebar-nav { padding: 12px 12px; flex: 1; }
+.sidebar-section { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-3); padding: 14px 8px 6px; }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px;
+  cursor: pointer; transition: background .15s, color .15s;
+  margin-bottom: 2px; color: var(--text-2);
+  font-size: 13px; font-weight: 500; text-decoration: none;
+  border: none; background: none; width: 100%; text-align: left; font-family: 'DM Sans', sans-serif;
+}
+.sidebar-item:hover { background: var(--surface-2); color: var(--text); }
+.sidebar-item.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+.sidebar-item .si-icon { width: 20px; text-align: center; font-size: 15px; }
+.sidebar-divider { height: 1px; background: var(--border-subtle); margin: 8px 0; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border-subtle); }
+.sidebar-add-btn {
+  width: 100%; padding: 10px; border-radius: 10px;
+  background: var(--accent); color: white; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.sidebar-add-btn:hover { background: var(--accent-hover); }
+
+/* MAIN CONTENT */
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+.topbar {
+  background: var(--surface);
+  padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 0 var(--border-subtle);
+}
+.topbar-left {}
+.tg { font-size: 11px; color: var(--text-3); font-weight: 500; letter-spacing: .3px; margin-bottom: 1px; }
+.tn { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.5px; line-height: 1; }
+.td { font-size: 12px; font-weight: 400; color: var(--text-2); margin-top: 2px; }
+.topbar-right { display: flex; gap: 8px; align-items: center; }
+
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .15s, border-color .15s;
+  font-size: 15px; flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--border); }
+
+/* ── HAMBURGER ── */
+.hamburger { display: flex; width: 36px; height: 36px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; flex-direction: column; justify-content: center; gap: 4.5px; padding: 10px; transition: background .15s; flex-shrink: 0; position: fixed; top: 16px; right: 16px; z-index: 600; box-shadow: var(--shadow-sm); }
+.hamburger span { display: block; height: 1.5px; background: var(--text); border-radius: 2px; transition: transform .25s, opacity .25s, width .25s; transform-origin: left center; }
+.hamburger span:nth-child(2) { width: 65%; }
+.hamburger span:nth-child(3) { width: 40%; }
+.hamburger.open span:nth-child(1) { transform: rotate(42deg) translateY(-0.5px); width: 100%; }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-42deg) translateY(0.5px); width: 100%; }
+
+/* ── DRAWER ── */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 400; opacity: 0; pointer-events: none; transition: opacity .25s; }
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+.drawer { position: fixed; top: 0; right: 0; width: 280px; height: 100vh; background: var(--surface); box-shadow: -4px 0 40px rgba(0,0,0,.12); z-index: 500; transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; overflow-y: auto; }
+.drawer.open { transform: translateX(0); }
+
+.drawer-header { padding: 56px 20px 24px; border-bottom: 1px solid var(--border-subtle); }
+.drawer-brand { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -.4px; }
+.drawer-brand span { color: var(--accent); }
+.drawer-sub { font-size: 11px; color: var(--text-3); font-weight: 400; margin-top: 3px; }
+
+.drawer-body { padding: 10px 12px; flex: 1; }
+.drawer-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-3); padding: 14px 10px 6px; }
+.drawer-item { display: flex; align-items: center; gap: 12px; padding: 10px 10px; border-radius: var(--radius-sm); cursor: pointer; transition: background .15s; margin-bottom: 2px; }
+.drawer-item:hover { background: var(--surface-2); }
+.drawer-item.active-item { background: var(--accent-light); }
+.drawer-item.active-item .di-label { color: var(--accent); }
+.di-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: var(--surface-2); }
+.di-text { flex: 1; min-width: 0; }
+.di-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.di-sub { font-size: 11px; font-weight: 400; color: var(--text-3); margin-top: 1px; }
+.di-arrow { font-size: 14px; color: var(--text-3); transition: transform .15s, color .15s; }
+.drawer-item:hover .di-arrow { transform: translateX(2px); color: var(--accent); }
+.drawer-divider { height: 1px; background: var(--border-subtle); margin: 8px 10px; }
+.drawer-footer { padding: 16px 20px; border-top: 1px solid var(--border-subtle); font-size: 11px; font-weight: 400; color: var(--text-3); }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; min-height: calc(100vh - 65px); }
+
+/* Desktop shell — full width, no mobile constraints */
+.shell { flex: 1; min-height: 100vh; background: var(--bg); position: relative; }
+
+/* Desktop dashboard grid */
+#dash-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; padding: 0 32px 24px; }
+#past-exams-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; padding: 0 32px 24px; }
+.dash-course { margin: 0 !important; }
+.course-card { margin: 0 !important; }
+#course-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; padding: 0 32px 24px; }
+.assign-list { padding: 0 12px 8px; }
+.pomo-subject-row { padding: 4px 32px 12px; }
+
+/* Pomo card centered on desktop */
+#page-timer .pomo-card { margin: 0 32px 24px; max-width: 480px; }
+#page-timer .sh { padding: 20px 32px 12px; }
+
+/* ── SECTION HEADER ── */
+.sh { padding: 28px 32px 14px; display: flex; align-items: center; justify-content: space-between; }
+.sh h2 { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.sh-action { font-size: 12px; font-weight: 600; color: var(--accent); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 4px 8px; border-radius: 6px; transition: background .15s; }
+.sh-action:hover { background: var(--accent-light); }
+
+/* ── FORMS ── */
+.form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.form-col { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+label.fl { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .8px; }
+input, select, textarea {
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  color: var(--text); border-radius: var(--radius-sm); padding: 9px 12px;
+  outline: none; transition: border-color .15s, background .15s; width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--accent); background: var(--surface); }
+input::placeholder, textarea::placeholder { color: var(--text-3); font-weight: 400; }
+select option { background: white; }
+textarea { resize: vertical; min-height: 64px; }
+
+.btn-sm { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: none; cursor: pointer; transition: all .15s; }
+.btn-del { background: var(--red-light); color: var(--red); }
+.btn-del:hover { background: var(--red); color: white; }
+.btn-edit { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
+.btn-edit:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── MODAL ── */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.35); backdrop-filter: blur(6px); z-index: 600; display: none; align-items: flex-end; justify-content: center; }
+.modal-backdrop.open { display: flex; }
+.modal { background: var(--surface); border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 24px 20px 36px; animation: slideUp .28s cubic-bezier(.32,1,.24,1); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 36px; height: 3px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+.modal-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 20px; letter-spacing: -.3px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-save { flex: 1; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; padding: 12px; cursor: pointer; transition: background .15s; }
+.btn-save:hover { background: var(--accent-hover); }
+.btn-cancel { background: var(--surface-2); color: var(--text-2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; padding: 12px 16px; cursor: pointer; transition: border-color .15s; }
+.btn-cancel:hover { border-color: var(--text-3); }
+
+/* ── COURSE CARD ── */
+.course-card { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border); margin: 0; overflow: hidden; transition: box-shadow .2s; }
+.course-card:hover { box-shadow: var(--shadow); }
+.course-header { padding: 16px 16px 12px; display: flex; align-items: flex-start; gap: 12px; }
+.course-dot { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.course-info { flex: 1; min-width: 0; }
+.course-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; letter-spacing: -.2px; }
+.course-meta { font-size: 11px; font-weight: 400; color: var(--text-3); }
+.course-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.course-stats { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--border-subtle); }
+.cs-stat { padding: 12px; text-align: center; border-right: 1px solid var(--border-subtle); }
+.cs-stat:last-child { border-right: none; }
+.cs-val { font-size: 17px; font-weight: 700; display: block; letter-spacing: -.5px; }
+.cs-lbl { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin-top: 1px; }
+.prog-wrap { padding: 12px 16px; }
+.prog-meta { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-3); margin-bottom: 6px; }
+.prog-track { height: 4px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 4px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-muted { background: var(--surface-2); color: var(--text-3); }
+.badge-accent { background: var(--accent-light); color: var(--accent); }
+
+/* ── ASSIGNMENTS ── */
+.assign-list { padding: 0 16px 8px; }
+.assign-item { background: var(--bg); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: border-color .15s; }
+.assign-item:hover { border-color: var(--border); }
+.assign-item.done-item { opacity: .45; }
+.assign-item.done-item .ai-name { text-decoration: line-through; }
+.ai-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border); appearance: none; cursor: pointer; flex-shrink: 0; transition: all .15s; position: relative; }
+.ai-check:checked { background: var(--accent); border-color: var(--accent); }
+.ai-check:checked::after { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; background-size: 9px; }
+.ai-body { flex: 1; min-width: 0; }
+.ai-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+.ai-meta { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.ai-tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 5px; }
+.ai-del { background: none; border: none; color: var(--text-3); font-size: 12px; cursor: pointer; padding: 4px; border-radius: 5px; transition: all .15s; }
+.ai-del:hover { color: var(--red); background: var(--red-light); }
+.due-near { background: var(--red-light); color: var(--red); }
+.due-soon { background: var(--amber-light); color: var(--amber); }
+.due-ok { background: var(--green-light); color: var(--green); }
+.due-done { background: var(--surface-2); color: var(--text-3); }
+.weight-badge { background: var(--purple-light); color: var(--purple); }
+
+/* ── POMODORO ── */
+.pomo-subject-row { display: flex; gap: 6px; padding: 4px 16px 12px; overflow-x: auto; scrollbar-width: none; }
+.pomo-subject-row::-webkit-scrollbar { display: none; }
+.psub-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0; }
+.psub-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+
+.pomo-card { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 40px 32px; margin: 0 32px 16px; text-align: center; border: 1px solid var(--border); max-width: 500px; }
+.pomo-session-setup { margin-bottom: 24px; }
+.pss-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.pss-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.pss-row input { width: 64px; text-align: center; font-size: 18px; font-weight: 700; color: var(--text); }
+.pss-unit { font-size: 12px; font-weight: 400; color: var(--text-3); }
+.adj-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); transition: all .15s; }
+.adj-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+.pomo-ring-wrap { position: relative; width: 176px; height: 176px; margin: 0 auto 22px; }
+.pomo-ring-wrap svg { transform: rotate(-90deg); }
+.pr-bg { fill: none; stroke: var(--surface-2); stroke-width: 8; }
+.pr-fg { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 502; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke .3s; }
+.pr-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.pr-time { font-size: 36px; font-weight: 700; color: var(--text); letter-spacing: -2px; line-height: 1; transition: color .15s; }
+#pomo-time-display:hover .pr-time { color: var(--accent); }
+.pr-subject { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 5px; }
+.pomo-btns { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.pb-start { background: var(--accent); color: white; border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; padding: 11px 28px; border-radius: 10px; cursor: pointer; transition: background .15s; }
+.pb-start:hover { background: var(--accent-hover); }
+.pb-stop { background: var(--red-light); color: var(--red); border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; padding: 11px 18px; border-radius: 10px; cursor: pointer; transition: all .15s; }
+.pb-stop:hover { background: var(--red); color: white; }
+.pb-reset { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; padding: 11px 18px; border-radius: 10px; cursor: pointer; transition: all .15s; }
+.pb-reset:hover { border-color: var(--text-3); }
+.pomo-info { font-size: 12px; font-weight: 400; color: var(--text-3); }
+.pomo-info span { color: var(--accent); font-weight: 600; }
+.goal-list { display: flex; flex-direction: column; gap: 10px; }
+.goal-item { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px 14px; border: 1.5px solid transparent; transition: border-color .15s; }
+.gi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.gi-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.gi-hours { font-size: 12px; font-weight: 600; }
+.gi-track { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 5px; }
+.gi-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+.gi-sub { display: flex; justify-content: space-between; font-size: 10px; font-weight: 500; color: var(--text-3); }
+
+/* ── CLOCK CARD ── */
+.clock-card { background: var(--text); border-radius: var(--radius-lg); padding: 20px; margin: 16px; display: flex; align-items: center; justify-content: space-between; color: white; }
+.cc-time { font-size: 32px; font-weight: 700; letter-spacing: -1.5px; line-height: 1; }
+.cc-day { font-size: 11px; font-weight: 400; opacity: .45; margin-top: 3px; }
+.cc-right { text-align: right; }
+.cc-pomo { font-size: 32px; font-weight: 700; color: var(--accent-mid); letter-spacing: -1px; }
+.cc-lbl { font-size: 10px; font-weight: 400; opacity: .45; margin-top: 3px; }
+
+/* ── DASHBOARD ── */
+.dash-course { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm); margin: 0; overflow: hidden; border: 1px solid var(--border); transition: box-shadow .18s, transform .18s; }
+.dash-course:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.dc-header { padding: 16px 16px 10px; display: flex; align-items: center; gap: 12px; }
+.dc-dot { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.dc-info { flex: 1; }
+.dc-name { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.2px; }
+.dc-sub { font-size: 11px; font-weight: 400; color: var(--text-3); margin-top: 1px; }
+.dc-badges { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 16px 8px; }
+.dc-body { padding: 0 16px 16px; }
+.dc-prog-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-3); margin-bottom: 6px; }
+.dc-track { height: 4px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.dc-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+.pending-tag { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: var(--amber-light); color: var(--amber); }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 60px 24px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); margin: 0; border: 1px solid var(--border); grid-column: 1/-1; }
+.ei { font-size: 32px; margin-bottom: 10px; opacity: .5; }
+.et { font-size: 13px; color: var(--text-3); font-weight: 400; line-height: 1.5; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav { display: none; }
+.ni { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; color: var(--text-3); cursor: pointer; transition: color .15s; padding: 2px 12px; border-radius: 8px; }
+.ni.active { color: var(--accent); }
+.ni .ico { font-size: 18px; }
+.nav-fab { width: 48px; height: 48px; border-radius: 14px; background: var(--accent); color: white; font-size: 22px; font-weight: 300; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(13,122,107,.35); border: none; cursor: pointer; margin-top: -18px; transition: all .15s; line-height: 1; }
+.nav-fab:hover { background: var(--accent-hover); transform: scale(1.05); }
+
+.divider { height: 1px; background: var(--border-subtle); margin: 0 16px 8px; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.anim { animation: cardIn .2s ease; }
+
+.color-0 { background: #eff6ff; }
+.color-1 { background: #f5f3ff; }
+.color-2 { background: #f0fdf4; }
+.color-3 { background: #fffbeb; }
+.color-4 { background: #fef2f2; }
+.color-5 { background: #ecfdf5; }
+.color-6 { background: #fdf2f8; }
+.color-7 { background: #f0f9ff; }
+
+@media(max-width:900px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } }
+
+/* ── CALENDAR ── */
+.cal-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; gap: 8px; }
+.cal-nav { display: flex; align-items: center; gap: 6px; }
+.cal-nav-btn { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: all .15s; color: var(--text); }
+.cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.cal-month-label { font-size: 14px; font-weight: 600; color: var(--text); min-width: 130px; text-align: center; letter-spacing: -.2px; }
+.cal-today-btn { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 11px; padding: 5px 12px; cursor: pointer; transition: all .15s; }
+.cal-today-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.cal-view-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.cvt-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 11px; padding: 5px 12px; cursor: pointer; color: var(--text-3); transition: all .15s; }
+.cvt-btn.active { background: var(--accent); color: white; }
+
+.cal-grid-wrap { overflow-x: auto; overflow-y: auto; max-height: calc(100vh - 196px); }
+.cal-week-grid { display: grid; grid-template-columns: 44px repeat(7,1fr); min-width: 500px; }
+.cal-corner { background: var(--surface); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border-subtle); position: sticky; top: 0; z-index: 5; }
+.cal-day-head { background: var(--surface); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border-subtle); padding: 8px 4px; text-align: center; position: sticky; top: 0; z-index: 5; }
+.cal-day-name { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); }
+.cal-day-num { font-size: 15px; font-weight: 600; color: var(--text); margin-top: 2px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 2px auto 0; }
+.cal-day-head.today .cal-day-num { background: var(--accent); color: white; }
+.cal-day-head.today .cal-day-name { color: var(--accent); }
+.cal-time-label { font-size: 10px; font-weight: 500; color: var(--text-3); text-align: right; padding: 0 8px 0 2px; height: 48px; display: flex; align-items: flex-start; padding-top: 4px; border-right: 1px solid var(--border-subtle); position: sticky; left: 0; background: var(--surface); z-index: 4; }
+.cal-cell { border-right: 1px solid var(--border-subtle); border-bottom: 1px solid rgba(228,232,239,.5); height: 48px; position: relative; cursor: pointer; transition: background .1s; }
+.cal-cell:hover { background: var(--accent-light); }
+.cal-event { position: absolute; left: 2px; right: 2px; border-radius: 6px; padding: 2px 5px; font-size: 10px; font-weight: 600; cursor: pointer; z-index: 3; overflow: hidden; transition: opacity .15s; }
+.cal-event:hover { opacity: .8; }
+.cal-event-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-event-time { opacity: .7; font-size: 9px; }
+.cal-month-grid { display: grid; grid-template-columns: repeat(7,1fr); border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+.cal-month-head { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); text-align: center; padding: 8px 0; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
+.cal-month-cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); min-height: 72px; padding: 6px; cursor: pointer; transition: background .1s; }
+.cal-month-cell:hover { background: var(--accent-light); }
+.cal-month-cell.other-month .cal-mday { color: var(--border); }
+.cal-mday { font-size: 12px; font-weight: 600; color: var(--text); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 3px; }
+.cal-month-cell.today .cal-mday { background: var(--accent); color: white; }
+.cal-ev-dot { font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
+
+/* ── COURSE MODAL DATES ── */
+.dates-section { margin-bottom: 12px; }
+.dates-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.add-date-btn { background: var(--accent-light); color: var(--accent); border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 10px; cursor: pointer; transition: all .15s; }
+.add-date-btn:hover { background: var(--accent); color: white; }
+.date-entry { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 7px 10px; }
+.date-entry select { flex: 0 0 auto; width: 115px; font-size: 12px; padding: 5px 8px; background: var(--surface); }
+.date-entry input[type="date"] { flex: 1; font-size: 12px; padding: 5px 8px; background: var(--surface); }
+.de-del { background: none; border: none; color: var(--text-3); font-size: 12px; cursor: pointer; padding: 2px 4px; flex-shrink: 0; transition: color .15s; }
+.de-del:hover { color: var(--red); }
+
+.cm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.cm-btn-cancel { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 12px 0; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface-2); color: var(--text-2); cursor: pointer; transition: all .15s; text-align: center; }
+.cm-btn-cancel:hover { border-color: var(--text-3); color: var(--text); }
+.cm-btn-save { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 12px 0; border-radius: var(--radius-sm); border: none; background: var(--accent); color: white; cursor: pointer; transition: background .15s; text-align: center; }
+.cm-btn-save:hover { background: #1d4ed8; }
+
+/* ── LOGO ── */
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.app-logo { width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; }
+
+/* ── COURSE DETAIL MODAL ── */
+.cdm-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.cdm-dot { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cdm-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+.cdm-meta { font-size: 12px; color: var(--text-3); font-weight: 400; margin-top: 2px; }
+.cdm-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+.cdm-stat { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.cdm-stat-val { font-size: 20px; font-weight: 700; letter-spacing: -.5px; }
+.cdm-stat-lbl { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+.cdm-section { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--text-3); margin-bottom: 8px; }
+.cdm-prog-wrap { margin-bottom: 20px; }
+.cdm-prog-track { height: 6px; background: var(--surface-2); border-radius: 6px; overflow: hidden; margin-top: 6px; }
+.cdm-prog-fill { height: 100%; border-radius: 6px; transition: width .5s; }
+.cdm-prog-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; color: var(--text-3); }
+.cdm-dates { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.cdm-date-row { display: flex; align-items: center; gap: 10px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 12px; }
+.cdm-date-type { font-size: 11px; font-weight: 600; color: var(--text-2); min-width: 72px; text-transform: capitalize; }
+.cdm-date-val { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; }
+.cdm-assigns { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.cdm-assign-row { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--surface-2); border-radius: var(--radius-sm); }
+.cdm-assign-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--text); }
+.cdm-notes { font-size: 13px; font-weight: 400; color: var(--text-2); line-height: 1.6; background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 20px; }
+.cdm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.cdm-btn-edit { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 12px 0; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface-2); color: var(--text-2); cursor: pointer; text-align: center; transition: all .15s; }
+.cdm-btn-edit:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.cdm-btn-close { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 12px 0; border-radius: var(--radius-sm); border: none; background: var(--accent); color: white; cursor: pointer; text-align: center; transition: background .15s; }
+.cdm-btn-close:hover { background: #1d4ed8; }
+
+/* ── RESOURCES ── */
+.resource-entry { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 7px 10px; }
+.resource-entry select { flex: 0 0 auto; width: 84px; font-size: 12px; padding: 5px 6px; background: var(--surface); }
+.resource-entry input[type="text"] { flex: 1; font-size: 12px; padding: 5px 8px; background: var(--surface); }
+.resource-entry input[type="file"] { flex: 1; font-size: 11px; padding: 4px 6px; background: var(--surface); color: var(--text-2); }
+.re-del { background: none; border: none; color: var(--text-3); font-size: 12px; cursor: pointer; padding: 2px 4px; flex-shrink: 0; transition: color .15s; }
+.re-del:hover { color: var(--red); }
+.resource-file-name { font-size: 11px; font-weight: 500; color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.resource-link { font-size: 11px; color: var(--accent); text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.resource-link:hover { text-decoration: underline; }
+
+.profile-photo-section{display:flex;flex-direction:column;align-items:center;padding:24px 20px 16px;}
+.profile-photo-wrap{position:relative;width:64px;height:64px;border-radius:50%;background:var(--surface-2);border:2px solid var(--border);cursor:pointer;overflow:hidden;flex-shrink:0;}
+.profile-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.profile-photo-overlay{position:absolute;inset:0;background:rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;font-size:15px;opacity:0;transition:opacity .2s;border-radius:50%;}
+.profile-photo-wrap:hover .profile-photo-overlay{opacity:1;}
+.profile-photo-hint{font-size:11px;color:var(--text-3);margin-top:8px;font-weight:400;}
+.profile-fields{margin:4px 32px 24px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.profile-field-row{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--border-subtle);cursor:pointer;transition:background .15s;gap:12px;}
+.profile-field-row:last-child{border-bottom:none;}
+.profile-field-row:hover{background:var(--surface-2);}
+.profile-field-label{font-size:13px;font-weight:500;color:var(--text);flex-shrink:0;}
+.profile-field-value{font-size:13px;font-weight:400;color:var(--text-3);text-align:right;}
+.profile-field-value.filled{color:var(--text);font-weight:600;}
+.profile-field-chevron{font-size:14px;color:var(--text-3);flex-shrink:0;margin-left:6px;}
+
+
+/* ── DIALOG (centered popup) ── */
+.dialog-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); backdrop-filter: blur(4px); z-index: 800; display: none; align-items: center; justify-content: center; padding: 24px; }
+.dialog-backdrop.open { display: flex; }
+.dialog-box { background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); border-radius: 18px; padding: 28px 24px 24px; width: 100%; max-width: 300px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.25); animation: dialogIn .2s cubic-bezier(.32,1,.24,1); }
+@keyframes dialogIn { from { opacity:0; transform: scale(.92); } to { opacity:1; transform: scale(1); } }
+.dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dialog-btn-cancel { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 11px 0; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface-2); color: var(--text-2); cursor: pointer; transition: all .15s; }
+.dialog-btn-cancel:hover { border-color: var(--text-3); color: var(--text); }
+.dialog-btn-confirm { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 11px 0; border-radius: 10px; border: none; background: var(--red); color: white; cursor: pointer; transition: background .15s; }
+.dialog-btn-confirm:hover { background: #b91c1c; }
+
+.signup-btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:6px 13px;border-radius:8px;border:1.5px solid var(--text);background:transparent;color:var(--text);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.signup-btn:hover{background:var(--surface-2);}
+.signup-modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);z-index:900;display:none;align-items:center;justify-content:center;padding:24px;}
+.signup-modal-wrap.open{display:flex;}
+.signup-modal{background:rgba(255,255,255,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.6);border-radius:20px;padding:32px 24px 28px;width:100%;max-width:340px;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:dialogIn .22s cubic-bezier(.32,1,.24,1);position:relative;}
+.signup-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:16px;color:var(--text-3);cursor:pointer;padding:4px;border-radius:6px;transition:color .15s;line-height:1;}
+.signup-close:hover{color:var(--text);}
+.signup-modal-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:4px;}
+.signup-modal-sub{font-size:12px;color:var(--text-3);font-weight:400;margin-bottom:24px;}
+.signup-divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.signup-divider span{font-size:11px;color:var(--text-3);white-space:nowrap;}
+.signup-divider::before,.signup-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.signup-google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text);transition:all .15s;margin-bottom:4px;}
+.signup-google-btn:hover{border-color:var(--accent);background:var(--accent-light);}
+.signup-submit-btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:4px;}
+.signup-submit-btn:hover{background:#1d4ed8;}
+.signup-login-link{text-align:center;font-size:12px;color:var(--text-3);margin-top:16px;}
+.signup-login-link a{color:var(--accent);font-weight:600;text-decoration:none;cursor:pointer;}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:hidden;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 32px;background:rgba(8,11,18,.75);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-logo{width:32px;height:32px;border-radius:9px;background:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-name{font-size:17px;font-weight:700;letter-spacing:-.4px;}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+.btn-ghost{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{border-color:rgba(255,255,255,.4);color:#fff;}
+.btn-nav-primary{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer;transition:background .2s;}
+.btn-nav-primary:hover{background:#1d4ed8;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:110px 24px 64px;text-align:center;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse at center,rgba(37,99,235,.22) 0%,transparent 68%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 90% 70% at 50% 40%,black 20%,transparent 75%);pointer-events:none;}
+.hero-content{position:relative;z-index:1;max-width:700px;}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;border:1px solid rgba(37,99,235,.35);background:rgba(37,99,235,.1);font-size:11px;font-weight:600;color:#93b4fd;letter-spacing:.6px;text-transform:uppercase;margin-bottom:26px;}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:#60a5fa;}
+.hero-h1{font-size:clamp(38px,8vw,64px);font-weight:800;line-height:1.06;letter-spacing:-2.5px;margin-bottom:22px;}
+.hero-h1 em{font-style:normal;color:#2563eb;}
+.hero-p{font-size:clamp(14px,2.2vw,17px);color:rgba(255,255,255,.48);line-height:1.7;max-width:500px;margin:0 auto 40px;font-weight:400;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-cta{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;padding:14px 30px;border-radius:11px;border:none;background:#2563eb;color:white;cursor:pointer;display:inline-flex;align-items:center;gap:9px;box-shadow:0 0 32px rgba(37,99,235,.38);transition:all .2s;}
+.btn-cta:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:0 4px 36px rgba(37,99,235,.52);}
+.btn-outline{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:14px 28px;border-radius:11px;border:1.5px solid rgba(255,255,255,.14);background:transparent;color:rgba(255,255,255,.75);cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:rgba(255,255,255,.32);color:#fff;}
+
+/* PHONE */
+.phone-wrap{position:relative;z-index:1;margin:60px auto 0;width:min(300px,80vw);}
+.phone{background:#111420;border-radius:38px;border:1.5px solid rgba(255,255,255,.1);padding:13px;box-shadow:0 48px 96px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.06);}
+.phone-pill{width:68px;height:5px;background:#1a1f2e;border-radius:3px;margin:0 auto 12px;}
+.phone-screen{background:#f7f8fa;border-radius:26px;overflow:hidden;}
+.pst{background:#fff;padding:11px 13px 9px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e4e8ef;}
+.pst-brand{display:flex;align-items:center;gap:7px;}
+.pst-logo{width:20px;height:20px;background:#2563eb;border-radius:5px;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:4px;}
+.pst-logo div{background:white;border-radius:1px;}
+.pst-logo div:nth-child(2),.pst-logo div:nth-child(3){opacity:.45;}
+.pst-name{font-size:11px;font-weight:700;color:#0f1523;}
+.pst-lines{display:flex;flex-direction:column;gap:3px;}
+.pst-lines span{display:block;background:#0f1523;border-radius:1px;height:1.5px;}
+.pst-lines span:nth-child(2){width:70%;}
+.pst-lines span:nth-child(3){width:45%;}
+.psc{padding:11px 11px 8px;}
+.psc-title{font-size:8.5px;font-weight:700;color:#0f1523;margin-bottom:8px;}
+.psc-card{background:#fff;border-radius:12px;border:1px solid #e4e8ef;padding:9px 10px;margin-bottom:7px;}
+.psc-ch{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.psc-dot{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.psc-cn{font-size:8.5px;font-weight:700;color:#0f1523;}
+.psc-cs{font-size:7px;color:#8a95a8;margin-top:1px;}
+.psc-badge{display:inline-block;font-size:7px;font-weight:600;padding:2px 6px;border-radius:4px;background:#eff4ff;color:#2563eb;margin-bottom:5px;}
+.psc-pl{display:flex;justify-content:space-between;font-size:6.5px;color:#8a95a8;margin-bottom:3px;}
+.psc-pt{height:3px;background:#f0f2f5;border-radius:3px;}
+.psc-pf{height:100%;border-radius:3px;}
+.psb{background:#fff;border-top:1px solid #e4e8ef;padding:7px 8px 11px;display:flex;justify-content:space-around;align-items:center;}
+.psb-ni{display:flex;flex-direction:column;align-items:center;gap:1.5px;font-size:5.5px;color:#8a95a8;}
+.psb-ni.on{color:#2563eb;}
+.psb-ni-i{font-size:12px;}
+.psb-fab{width:28px;height:28px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:300;margin-top:-11px;box-shadow:0 3px 10px rgba(37,99,235,.4);line-height:1;}
+
+/* STATS */
+.stats{border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.018);padding:52px 24px;}
+.stats-row{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center;}
+.stat-val{font-size:clamp(32px,6vw,48px);font-weight:800;color:#2563eb;letter-spacing:-2px;line-height:1;}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,.38);margin-top:6px;font-weight:400;}
+
+/* FEATURES */
+.features{max-width:880px;margin:0 auto;padding:88px 24px;}
+.sec-tag{font-size:11px;font-weight:600;color:#93b4fd;text-transform:uppercase;letter-spacing:1.5px;text-align:center;margin-bottom:10px;}
+.sec-h2{font-size:clamp(26px,5vw,38px);font-weight:700;letter-spacing:-1px;text-align:center;margin-bottom:52px;}
+.sec-h2 span{color:rgba(255,255,255,.28);}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;}
+.feat-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.065);border-radius:16px;padding:24px;transition:all .25s;}
+.feat-card:hover{background:rgba(255,255,255,.06);border-color:rgba(37,99,235,.28);transform:translateY(-2px);}
+.feat-icon{font-size:26px;margin-bottom:12px;}
+.feat-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;letter-spacing:-.2px;}
+.feat-desc{font-size:12px;color:rgba(255,255,255,.42);line-height:1.68;font-weight:400;}
+
+/* BOTTOM CTA */
+.bcta{padding:96px 24px;text-align:center;position:relative;overflow:hidden;}
+.bcta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 90% at 50% 50%,rgba(37,99,235,.1) 0%,transparent 70%);}
+.bcta-inner{position:relative;z-index:1;max-width:500px;margin:0 auto;}
+.bcta-h2{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1.5px;margin-bottom:16px;}
+.bcta-p{font-size:14px;color:rgba(255,255,255,.42);line-height:1.68;margin-bottom:34px;}
+
+/* FOOTER */
+.foot{border-top:1px solid rgba(255,255,255,.06);padding:28px 32px;}
+.foot-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.foot-name{font-size:14px;font-weight:700;color:rgba(255,255,255,.5);}
+.foot-text{font-size:12px;color:rgba(255,255,255,.22);}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(8px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:rgba(14,18,28,.96);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:36px 28px 30px;width:100%;max-width:360px;box-shadow:0 32px 80px rgba(0,0,0,.55);animation:popIn .2s cubic-bezier(.32,1,.24,1);position:relative;}
+@keyframes popIn{from{opacity:0;transform:scale(.9);}to{opacity:1;transform:scale(1);}}
+.modal-x{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.28);font-size:17px;cursor:pointer;padding:4px;line-height:1;transition:color .15s;}
+.modal-x:hover{color:rgba(255,255,255,.75);}
+.modal-h{font-size:20px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:24px;}
+.modal-google{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.04);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,.75);transition:all .15s;}
+.modal-google:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);color:#fff;}
+.modal-div{display:flex;align-items:center;gap:10px;margin:14px 0;}
+.modal-div span{font-size:11px;color:rgba(255,255,255,.22);white-space:nowrap;}
+.modal-div::before,.modal-div::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.modal-fg{margin-bottom:12px;}
+.modal-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px;}
+.modal-inp{width:100%;font-family:'DM Sans',sans-serif;font-size:13px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);color:#fff;border-radius:9px;padding:10px 13px;outline:none;transition:border-color .15s;}
+.modal-inp::placeholder{color:rgba(255,255,255,.22);}
+.modal-inp:focus{border-color:rgba(37,99,235,.65);background:rgba(37,99,235,.07);}
+.modal-submit{width:100%;padding:12px;margin-top:6px;border-radius:10px;border:none;background:#2563eb;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+.modal-submit:hover{background:#1d4ed8;}
+.modal-foot{text-align:center;font-size:12px;color:rgba(255,255,255,.28);margin-top:16px;}
+.modal-foot a{color:#93b4fd;cursor:pointer;font-weight:500;text-decoration:none;}
+.modal-foot a:hover{text-decoration:underline;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.fu{animation:fadeUp .65s ease both;}
+.fu1{animation-delay:.08s;}.fu2{animation-delay:.2s;}.fu3{animation-delay:.34s;}.fu4{animation-delay:.5s;}
+
+@media(max-width:600px){.nav{padding:14px 18px;}.stats-row{grid-template-columns:1fr;gap:28px;}.foot-inner{justify-content:center;text-align:center;}}
+
+/* ── LANDING SCREEN ── */
+#landing-screen { display: block; }
+#app-screen { }
+
+/* ── WALKTHROUGH ── */
+.wt-box {
+  background: #fff;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px 24px;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,.22);
+  animation: popIn .25s cubic-bezier(.32,1,.24,1);
+  overflow: hidden;
+}
+.wt-progress {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+}
+.wt-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  transition: width .35s cubic-bezier(.4,0,.2,1);
+}
+.wt-skip {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none;
+  font-family: 'DM Sans',sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-3); cursor: pointer;
+  padding: 4px 8px; border-radius: 6px;
+  transition: color .15s;
+}
+.wt-skip:hover { color: var(--text); }
+.wt-dots {
+  display: flex; gap: 6px; justify-content: center;
+  margin-bottom: 24px; margin-top: 8px;
+}
+.wt-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: all .2s;
+}
+.wt-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+.wt-step { display: none; text-align: center; }
+.wt-step.active { display: block; }
+.wt-step-icon {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  background: var(--accent-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin: 0 auto 18px;
+}
+.wt-step-num {
+  font-size: 10px; font-weight: 700;
+  color: var(--accent); text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 6px;
+}
+.wt-step-title {
+  font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -.4px;
+  margin-bottom: 10px; line-height: 1.25;
+}
+.wt-step-desc {
+  font-size: 13px; font-weight: 400;
+  color: var(--text-2); line-height: 1.65;
+  margin-bottom: 4px;
+}
+.wt-step-tip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-light);
+  border-radius: 8px; padding: 8px 12px;
+  font-size: 11px; font-weight: 500; color: var(--accent);
+  margin-top: 12px; line-height: 1.4; text-align: left;
+}
+.wt-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 24px; gap: 10px;
+}
+.wt-btn-prev {
+  font-family: 'DM Sans',sans-serif;
+  font-size: 13px; font-weight: 600;
+  padding: 11px 20px; border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: transparent; color: var(--text-2);
+  cursor: pointer; transition: all .15s; flex: 1;
+}
+.wt-btn-prev:hover { border-color: var(--text-3); color: var(--text); }
+.wt-btn-next {
+  font-family: 'DM Sans',sans-serif;
+  font-size: 13px; font-weight: 600;
+  padding: 11px 20px; border-radius: 10px;
+  border: none; background: var(--accent); color: white;
+  cursor: pointer; transition: background .15s; flex: 2;
+}
+.wt-btn-next:hover { background: #1d4ed8; }
+.wt-btn-next.finish { background: var(--green); }
+.wt-btn-next.finish:hover { background: #15803d; }
+
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">
+      <svg viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#0d7a6b"/><rect x="10" y="10" width="7" height="7" rx="2" fill="white"/><rect x="19" y="10" width="7" height="7" rx="2" fill="white" opacity="0.5"/><rect x="10" y="19" width="7" height="7" rx="2" fill="white" opacity="0.5"/><rect x="19" y="19" width="7" height="7" rx="2" fill="white"/></svg>
+    </div>
+    <span class="sidebar-logo-name">StudyOS</span>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="sidebar-section">Main</div>
+    <button class="sidebar-item active" id="si-dash" onclick="goTab('dash',null,'ni-dash')">
+      <span class="si-icon">🏠</span> Dashboard
+    </button>
+    <button class="sidebar-item" id="si-courses" onclick="goTab('courses',null,'ni-courses')">
+      <span class="si-icon">📚</span> Courses
+    </button>
+    <button class="sidebar-item" id="si-timer" onclick="goTab('timer',null,'ni-timer')">
+      <span class="si-icon">⏱</span> Focus Timer
+    </button>
+    <button class="sidebar-item" id="si-cal" onclick="goTab('cal',null,'ni-cal')">
+      <span class="si-icon">📆</span> Calendar
+    </button>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Tools</div>
+    <button class="sidebar-item" id="si-grade" onclick="drawerGoTo('grade')">
+      <span class="si-icon">🎯</span> Predicted Grade
+    </button>
+    <button class="sidebar-item" id="si-profile" onclick="goTab('profile',null,'ni-profile')">
+      <span class="si-icon">👤</span> Profile
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="sidebar-add-btn" onclick="openCourseModal()">
+      <span>+</span> Add Course
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+
+<!-- TOP HEADER -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar" style="background:none;border:1px solid var(--border);border-radius:8px;padding:7px 8px;cursor:pointer;color:var(--text-2);line-height:0;transition:background .15s,border-color .15s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='none'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div style="display:flex;flex-direction:column;">
+
+      <div style="font-size:20px;font-weight:700;letter-spacing:-.4px;line-height:1.1;" id="page-title">Dashboard</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="td" id="tdate">—</div>
+    <div style="width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:700;cursor:pointer;" onclick="goTab('profile',null,'ni-profile')" id="topbar-avatar">S</div>
+  </div>
+</div>
+
+<div class="shell">
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dash">
+    <div class="sh" style="display:flex;align-items:center;justify-content:space-between;">
+      <h2>Semester Overview</h2>
+      <button id="sort-toggle-wrap" onclick="setDashSort(!dashSortAsc)" style="display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text);box-shadow:var(--shadow-sm);">
+        <svg id="sort-arrow" width="13" height="13" viewBox="0 0 13 13" fill="none" style="transition:transform .22s;">
+          <path d="M6.5 2v9M3 8.5l3.5 3.5 3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="sort-label">Soonest</span>
+      </button>
+    </div>
+    <div id="exam-stats" style="display:flex;gap:12px;padding:0 32px 12px;"></div>
+    <div id="study-hours-stat" style="padding:0 32px 16px;"></div>
+    <div id="dash-list"></div>
+    <div id="past-exams-section" style="display:none;">
+      <div class="sh" style="padding-top:6px;">
+        <h2 style="color:var(--text-3);font-size:15px;">Past Exams</h2>
+      </div>
+      <div id="past-exams-list"></div>
+    </div>
+  </div>
+
+  <!-- COURSES -->
+  <div class="page" id="page-courses">
+    <div class="sh">
+      <h2>My Courses</h2>
+      <button class="sh-action" onclick="openCourseModal()">+ Add Course</button>
+    </div>
+    <div id="course-list"></div>
+  </div>
+
+  <!-- TIMER -->
+  <div class="page" id="page-timer">
+    <div class="sh" style="margin-top:4px"><h2>Subject</h2></div>
+    <div class="pomo-subject-row" id="pomo-subjects"></div>
+    <div class="pomo-card">
+      <div class="pomo-ring-wrap">
+        <svg width="176" height="176" viewBox="0 0 176 176">
+          <circle class="pr-bg" cx="88" cy="88" r="78"/>
+          <circle class="pr-fg" id="pomo-ring" cx="88" cy="88" r="78"/>
+        </svg>
+        <div class="pr-inner">
+          <div id="pomo-time-display" style="cursor:pointer;" onclick="startEditDur()" title="Tap to set duration">
+            <div class="pr-time" id="pomo-time">25:00</div>
+          </div>
+          <input id="dur-inline" type="number" min="1" max="180" value="25"
+            onblur="finishEditDur()" onkeydown="if(event.key==='Enter')finishEditDur();if(event.key==='Escape')cancelEditDur();"
+            style="display:none;width:80px;font-size:32px;font-weight:700;color:var(--accent);text-align:center;border:none;border-bottom:2px solid var(--accent);background:transparent;outline:none;font-family:'DM Sans',sans-serif;letter-spacing:-1px;">
+          <div class="pr-subject" id="pomo-cur-sub">Tap time to set</div>
+        </div>
+      </div>
+      <div class="pomo-btns">
+        <button class="pb-start" id="pb-start" onclick="togglePomo()">▶ Start</button>
+        <button class="pb-stop" id="pb-stop" onclick="stopPomo()" style="display:none">⏹ Stop</button>
+        <button class="pb-reset" onclick="resetPomo()">↺</button>
+      </div>
+      <div class="pomo-info">Completed today: <span id="pomo-session-count">0</span></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR PAGE -->
+  <div class="page" id="page-cal">
+    <div class="cal-toolbar">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+        <div class="cal-month-label" id="cal-label">Loading...</div>
+        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+      </div>
+      <button class="cal-today-btn" onclick="calGoToday()">Today</button>
+      <div class="cal-view-toggle">
+        <button class="cvt-btn active" id="cvt-week" onclick="setCalView('week')">Week</button>
+        <button class="cvt-btn" id="cvt-month" onclick="setCalView('month')">Month</button>
+      </div>
+    </div>
+    <div class="cal-grid-wrap" id="cal-grid-wrap"></div>
+  </div>
+
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="sh"><h2>Profile</h2></div>
+
+    <div class="profile-photo-section">
+      <div class="profile-photo-wrap" onclick="document.getElementById('profile-photo-input').click()">
+        <img id="profile-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        <div id="profile-photo-placeholder" class="profile-photo-placeholder">👤</div>
+        <div class="profile-photo-overlay">📷</div>
+      </div>
+      <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="onProfilePhotoChange(event)">
+      <div class="profile-photo-hint">Tap to upload photo</div>
+    </div>
+
+    <div class="profile-fields">
+      <div class="profile-field-row" onclick="editProfileField('name')">
+        <div class="profile-field-label">Name</div>
+        <div class="profile-field-value" id="pf-name-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+      <div class="profile-field-row" onclick="editProfileField('degree')">
+        <div class="profile-field-label">Degree</div>
+        <div class="profile-field-value" id="pf-degree-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+      <div class="profile-field-row" onclick="editProfileField('years')">
+        <div class="profile-field-label">Years of Study</div>
+        <div class="profile-field-value" id="pf-years-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+      <div class="profile-field-row" onclick="editProfileField('curyear')">
+        <div class="profile-field-label">Current Year</div>
+        <div class="profile-field-value" id="pf-curyear-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+      <div class="profile-field-row" onclick="editProfileField('semsperyr')">
+        <div class="profile-field-label">Semesters / Year</div>
+        <div class="profile-field-value" id="pf-semsperyr-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+      <div class="profile-field-row" onclick="editProfileField('cursem')">
+        <div class="profile-field-label">Current Semester</div>
+        <div class="profile-field-value" id="pf-cursem-display">—</div>
+        <span class="profile-field-chevron">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRADE CALCULATOR PAGE -->
+  <div class="page" id="page-grade">
+    <div class="sh" style="display:flex;align-items:center;gap:12px;">
+      <button onclick="goTab('dash',null,'ni-dash')" style="display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--text-2);box-shadow:var(--shadow-sm);">← Back</button>
+      <h2>Predicted Grade</h2>
+    </div>
+    <div style="padding:0 16px 24px;display:flex;flex-direction:column;gap:18px;align-items:stretch;">
+
+      <!-- Current Average -->
+      <div>
+        <div style="margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--text);">Current Average</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">Your existing grade (0–100)</span>
+        </div>
+        <input id="gc-current" type="number" min="0" max="100" placeholder="e.g. 78"
+          style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;box-shadow:var(--shadow-sm);">
+      </div>
+
+      <!-- Predicted Exam Grade -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div>
+            <span style="font-size:13px;font-weight:700;color:var(--text);">Predicted Exam Grade</span>
+            <span style="font-size:11px;color:var(--text-3);margin-left:6px;">What you expect to score</span>
+          </div>
+          <span id="gc-exam-val" style="font-size:22px;font-weight:800;color:var(--accent);min-width:44px;text-align:right;line-height:1;">—</span>
+        </div>
+        <input id="gc-exam" type="range" min="0" max="100" value="75" oninput="document.getElementById('gc-exam-val').textContent=this.value;updateSliderColor(this);"
+          style="width:100%;height:6px;border-radius:4px;outline:none;cursor:pointer;accent-color:var(--accent);">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:4px;font-weight:500;">
+          <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+        </div>
+      </div>
+
+      <!-- Exam Weight -->
+      <div>
+        <div style="margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--text);">Exam Weight</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">How much the exam counts (%)</span>
+        </div>
+        <input id="gc-exam-w" type="number" min="0" max="100" placeholder="e.g. 40"
+          style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;box-shadow:var(--shadow-sm);">
+      </div>
+
+      <!-- Assignment Grade -->
+      <div>
+        <div style="margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--text);">Assignment Grade</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">Your assignment score (0–100)</span>
+        </div>
+        <input id="gc-assign" type="number" min="0" max="100" placeholder="e.g. 90"
+          style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;box-shadow:var(--shadow-sm);">
+      </div>
+
+      <!-- Assignment Weight -->
+      <div>
+        <div style="margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--text);">Assignment Weight</span>
+          <span style="font-size:11px;color:var(--text-3);margin-left:6px;">How much assignments count (%)</span>
+        </div>
+        <input id="gc-assign-w" type="number" min="0" max="100" placeholder="e.g. 60"
+          style="width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:14px;background:var(--surface);color:var(--text);outline:none;box-shadow:var(--shadow-sm);">
+      </div>
+
+      <!-- Submit button -->
+      <button onclick="calcGrade()" style="width:auto;align-self:center;padding:9px 24px;border-radius:10px;border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;cursor:pointer;box-shadow:0 4px 12px rgba(13,122,107,.3);transition:background .15s;">Calculate New Average</button>
+
+      <!-- Result -->
+      <div id="gc-result" style="display:none;border-radius:12px;padding:20px 18px;text-align:center;transition:background .3s,border .3s;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;opacity:.7;">Predicted New Average</div>
+        <div id="gc-score" style="font-size:52px;font-weight:800;line-height:1;"></div>
+        <div id="gc-letter" style="font-size:18px;font-weight:700;margin-top:6px;"></div>
+        <div style="margin-top:16px;height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden;">
+          <div id="gc-bar" style="height:100%;border-radius:4px;transition:width .4s cubic-bezier(.4,0,.2,1);"></div>
+        </div>
+        <div id="gc-bar-label" style="font-size:11px;font-weight:500;margin-top:6px;opacity:.6;"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /shell -->
+</div><!-- /main-content -->
+</div><!-- /app-layout -->
+
+<!-- EVENT MODAL -->
+<div class="modal-backdrop" id="ev-modal" style="z-index:700;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="ev-modal-title">Add Study Block</div>
+    <input type="hidden" id="ev-id">
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Title *</label>
+        <input id="ev-title" placeholder="e.g. Study Algorithms">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Course</label>
+        <select id="ev-course"><option value="">— No course —</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Date</label>
+        <input type="date" id="ev-date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Start</label>
+        <input type="time" id="ev-start">
+      </div>
+      <div class="form-col">
+        <label class="fl">End</label>
+        <input type="time" id="ev-end">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Notes</label>
+        <textarea id="ev-notes" placeholder="What will you work on?"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="ev-delete-btn" style="color:var(--red);border-color:var(--red-light)" onclick="deleteCalEvent()">Delete</button>
+      <button class="btn-cancel" onclick="closeEvModal()">Cancel</button>
+      <button class="btn-save" onclick="saveCalEvent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- HAMBURGER BUTTON (fixed, always visible, appears inside drawer when open) -->
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- SIDE DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-brand">Study<span>OS</span></div>
+    <div class="drawer-sub">Academic planner</div>
+  </div>
+  <div class="drawer-body">
+
+    <div class="drawer-section-label">Navigation</div>
+
+    <div class="drawer-item" id="di-dash" onclick="drawerGoTo('dash')">
+      <div class="di-icon">🏠</div>
+      <div class="di-text">
+        <div class="di-label">Dashboard</div>
+        <div class="di-sub">Semester overview</div>
+      </div>
+    </div>
+
+    <div class="drawer-item" id="di-courses" onclick="drawerGoTo('courses')">
+      <div class="di-icon">📚</div>
+      <div class="di-text">
+        <div class="di-label">Courses</div>
+        <div class="di-sub">Manage courses & assignments</div>
+      </div>
+    </div>
+
+    <div class="drawer-item" id="di-timer" onclick="drawerGoTo('timer')">
+      <div class="di-icon">⏱</div>
+      <div class="di-text">
+        <div class="di-label">Focus Timer</div>
+        <div class="di-sub">Pomodoro sessions</div>
+      </div>
+    </div>
+
+    <div class="drawer-item" id="di-cal" onclick="drawerGoTo('cal')">
+      <div class="di-icon">📆</div>
+      <div class="di-text">
+        <div class="di-label">Calendar</div>
+        <div class="di-sub">Schedule study time</div>
+      </div>
+    </div>
+
+    <div class="drawer-divider"></div>
+    <div class="drawer-section-label">Actions</div>
+
+    <div class="drawer-item" onclick="closeDrawer();openCourseModal()">
+      <div class="di-icon">➕</div>
+      <div class="di-text">
+        <div class="di-label">Add Course</div>
+        <div class="di-sub">Set up a new course</div>
+      </div>
+    </div>
+
+    <div class="drawer-item" onclick="drawerGoTo('timer')">
+      <div class="di-icon">▶️</div>
+      <div class="di-text">
+        <div class="di-label">Start Session</div>
+        <div class="di-sub">Begin a focus session</div>
+      </div>
+    </div>
+
+    <div class="drawer-divider"></div>
+    <div class="drawer-section-label">Tools</div>
+
+    <div class="drawer-item" onclick="drawerGoTo('grade')">
+      <div class="di-icon">🎯</div>
+      <div class="di-text">
+        <div class="di-label">Predicted Grade</div>
+        <div class="di-sub">Calculate your new average</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="drawer-footer">StudyOS · All data stored locally</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="ni active" id="ni-dash" onclick="goTab('dash',null,'ni-dash')">
+    <span class="ico">🏠</span><span>Home</span>
+  </div>
+  <div class="ni" id="ni-courses" onclick="goTab('courses',null,'ni-courses')">
+    <span class="ico">📚</span><span>Courses</span>
+  </div>
+  <button class="nav-fab" onclick="openCourseModal()">+</button>
+  <div class="ni" id="ni-timer" onclick="goTab('timer',null,'ni-timer')">
+    <span class="ico">⏱</span><span>Timer</span>
+  </div>
+  <div class="ni" id="ni-profile" onclick="goTab('profile',null,'ni-profile')">
+    <span class="ico">👤</span><span>Profile</span>
+  </div>
+</nav>
+
+<!-- COURSE MODAL -->
+<div class="modal-backdrop" id="course-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="cm-title">Add Course</div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Course Name *</label>
+        <input id="cm-name" placeholder="e.g. Data Structures">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Weekly Hours</label>
+        <input type="number" id="cm-lhours" placeholder="e.g. 3" min="1" max="40">
+      </div>
+      <div class="form-col">
+        <label class="fl">Target Study Hours</label>
+        <input type="number" id="cm-target" placeholder="e.g. 20" min="1">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Goal Grade (%)</label>
+        <input type="number" id="cm-grade" placeholder="e.g. 90" min="0" max="100">
+      </div>
+    </div>
+    <div class="dates-section">
+      <div class="dates-header">
+        <label class="fl" style="margin:0">Exam / Assignment Dates</label>
+        <button type="button" class="add-date-btn" onclick="addDateEntry()">+ Add Date</button>
+      </div>
+      <div id="cm-dates-list"></div>
+    </div>
+    <div class="dates-section">
+      <div class="dates-header">
+        <label class="fl" style="margin:0">Resources</label>
+        <button type="button" class="add-date-btn" onclick="addResourceEntry()">+ Add</button>
+      </div>
+      <div id="cm-resources-list"></div>
+    </div>
+    <div class="cm-actions">
+      <button class="cm-btn-cancel" onclick="closeCourseModal()">Cancel</button>
+      <button class="cm-btn-save" onclick="saveCourse()">Save Course</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGNMENT MODAL -->
+<div class="modal-backdrop" id="assign-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Assignment</div>
+    <input type="hidden" id="am-course-id">
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Title *</label>
+        <input id="am-title" placeholder="e.g. Homework 3">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Type</label>
+        <select id="am-type">
+          <option value="homework">Homework</option>
+          <option value="project">Project</option>
+          <option value="essay">Essay</option>
+          <option value="lab">Lab Report</option>
+          <option value="quiz">Quiz</option>
+          <option value="presentation">Presentation</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-col">
+        <label class="fl">Grade Weight (%)</label>
+        <input type="number" id="am-weight" placeholder="e.g. 20" min="0" max="100">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Due Date</label>
+        <input type="date" id="am-due">
+      </div>
+      <div class="form-col">
+        <label class="fl">Priority</label>
+        <select id="am-priority">
+          <option value="high">High</option>
+          <option value="medium" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Notes</label>
+        <textarea id="am-notes" placeholder="What's required?"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn-save" onclick="saveAssign()">Add Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE DETAIL MODAL -->
+<div class="modal-overlay" id="course-detail-modal" data-overlay-close="course-detail-modal">
+  <div style="
+    background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 100%);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.55);
+    border-bottom-color: rgba(255,255,255,0.2);
+    border-right-color: rgba(255,255,255,0.2);
+    border-radius: 24px;
+    padding: 26px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: liquidIn .25s cubic-bezier(.32,1.2,.24,1);
+  ">
+    <div id="cdm-content"></div>
+  </div>
+</div>
+
+<!-- PROFILE EDIT MODAL -->
+<div class="modal-backdrop" id="profile-edit-modal">
+  <div class="modal" style="padding-bottom:32px;">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="pem-title">Edit</div>
+    <div class="form-row"><div class="form-col">
+      <label class="fl" id="pem-label">Value</label>
+      <div id="pem-input-wrap"></div>
+    </div></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeProfileEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveProfileField()">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- DELETE COURSE MODAL -->
+<div class="dialog-backdrop" id="delete-course-modal" onclick="if(event.target===this)cancelDeleteCourse()">
+  <div class="dialog-box" style="position:relative;">
+    <button data-action="cancel-delete" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:15px;color:var(--text-3);cursor:pointer;line-height:1;padding:4px;border-radius:6px;transition:color .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">✕</button>
+    <div style="font-size:28px;margin-bottom:12px;">🗑</div>
+    <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-.2px;">Delete Course</div>
+    <div style="font-size:13px;font-weight:400;color:var(--text-3);line-height:1.6;margin-bottom:22px;">Are you sure you want to<br>delete this course?</div>
+    <div class="dialog-actions">
+      <button class="dialog-btn-cancel" data-action="cancel-delete">Cancel</button>
+      <button class="dialog-btn-confirm" data-action="confirm-delete">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+// EVENT DELEGATION for landing page buttons (bypasses inline onclick sandbox restrictions)
+document.addEventListener('click', function(e) {
+  var t = e.target.closest('[data-modal]');
+  if (t) { openM(t.getAttribute('data-modal')); return; }
+
+  t = e.target.closest('[data-close]');
+  if (t) { closeM(t.getAttribute('data-close')); return; }
+
+  t = e.target.closest('[data-switch]');
+  if (t) { var p=t.getAttribute('data-switch').split(','); switchM(p[0],p[1]); return; }
+
+  t = e.target.closest('[data-overlay]');
+  if (t && e.target === t) { closeM(t.getAttribute('data-overlay')); return; }
+
+  t = e.target.closest('[data-action]');
+  if (t) {
+    var a = t.getAttribute('data-action');
+    if (a === 'go-app-signup') { closeM('signup'); goApp(true); }
+    else if (a === 'go-app-login') { closeM('login'); goApp(false); }
+    else if (a === 'close-walkthrough') { closeWalkthrough(); }
+    else if (a === 'wt-prev') { wtPrev(); }
+    else if (a === 'wt-next') { wtNext(); }
+    else if (a === 'cancel-delete') { cancelDeleteCourse(); }
+    else if (a === 'confirm-delete') { confirmDeleteCourse(); }
+    return;
+  }
+});
+
+// SAFE STORAGE (in-memory fallback when localStorage is unavailable)
+const _store = {};
+function safeGet(key, def){ try{ const v=localStorage.getItem(key); return v!==null?v:def; }catch(e){ return _store[key]!==undefined?_store[key]:def; } }
+function safeSet(key, val){ try{ localStorage.setItem(key,val); }catch(e){ _store[key]=val; } }
+
+
+
+// MODAL CONTROLS - defined early so landing buttons work immediately
+function openM(t){
+  var el=document.getElementById('modal-'+t);
+  if(el){el.classList.add('open');document.body.style.overflow='hidden';}
+}
+function closeM(t){
+  var el=document.getElementById('modal-'+t);
+  if(el){el.classList.remove('open');document.body.style.overflow='';}
+}
+function switchM(a,b){closeM(a);setTimeout(function(){openM(b);},80);}
+window.openM=openM; window.closeM=closeM; window.switchM=switchM;
+
+// STATE
+let courses   = JSON.parse(safeGet('sos_courses', '[]') || '[]');
+let assigns   = JSON.parse(safeGet('sos_assigns', '[]') || '[]');
+let studyLog  = JSON.parse(safeGet('sos_log', '{}')     || '{}');
+let pomoCount = parseInt(safeGet('sos_pomo', '0')      || '0');
+let editingCourseId = null;
+let dashSortAsc = true; // true = soonest first
+let pendingDeleteCourseId = null;
+
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const EMOJIS = ['📘','📗','📙','📕','📓','📒','📔','🗂'];
+const COLORS  = ['color-0','color-1','color-2','color-3','color-4','color-5','color-6','color-7'];
+const CCOLORS = ['#2563eb','#7c3aed','#16a34a','#d97706','#dc2626','#0891b2','#db2777','#0284c7'];
+const TYPE_ICONS = {homework:'·',project:'·',essay:'·',lab:'·',quiz:'·',presentation:'·',other:'·'};
+const PRIO_BADGES = {
+  high:'<span class="ai-tag due-near">High</span>',
+  medium:'<span class="ai-tag due-soon">Medium</span>',
+  low:'<span class="ai-tag due-ok">Low</span>'
+};
+
+function getCourseColor(i){ return COLORS[i % COLORS.length]; }
+function getCourseEmoji(i){ return EMOJIS[i % EMOJIS.length]; }
+function getCourseHex(i)  { return CCOLORS[i % CCOLORS.length]; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function save(){
+  safeSet('sos_courses', JSON.stringify(courses));
+  safeSet('sos_assigns', JSON.stringify(assigns));
+  safeSet('sos_log',     JSON.stringify(studyLog));
+  safeSet('sos_pomo',    pomoCount);
+}
+
+// CLOCK
+function tickClock(){
+  const n=new Date(), h=n.getHours(), m=n.getMinutes().toString().padStart(2,'0');
+  const h12=(h%12||12), ampm=h>=12?'PM':'AM';
+  document.getElementById('greeting').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('tdate').textContent = `${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+  const ct=document.getElementById('cc-time'); if(ct) ct.textContent=`${h12}:${m} ${ampm}`;
+  const cd=document.getElementById('cc-day');  if(cd) cd.textContent=DAYS[n.getDay()];
+}
+setInterval(tickClock,1000); tickClock();
+
+// TABS
+const PAGE_TITLES = {dash:'Dashboard',courses:'My Courses',timer:'Focus Timer',cal:'Calendar',profile:'Profile',grade:'Predicted Grade'};
+function goTab(page, tabEl, navId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  const nid = navId || {dash:'ni-dash',courses:'ni-courses',timer:'ni-timer',cal:'ni-cal',profile:'ni-profile'}[page];
+  if(nid) document.getElementById(nid)?.classList.add('active');
+  const sid = {dash:'si-dash',courses:'si-courses',timer:'si-timer',cal:'si-cal',profile:'si-profile',grade:'si-grade'}[page];
+  if(sid) document.getElementById(sid)?.classList.add('active');
+  const pt = document.getElementById('page-title'); if(pt) pt.textContent = PAGE_TITLES[page]||'';
+  if(page==='timer') renderTimerSubjects();
+  if(page==='cal') renderCalendar();
+  if(page==='profile') renderProfile();
+}
+
+// HELPERS
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr); d.setHours(0,0,0,0);
+  const t=new Date(); t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function examBadge(dateStr){
+  if(!dateStr) return '';
+  const d=daysUntil(dateStr);
+  if(d<0)   return `<span class="badge badge-accent">Exam passed</span>`;
+  if(d===0) return `<span class="badge badge-accent">Exam today</span>`;
+  if(d===1) return `<span class="badge badge-accent">Exam in 1 day</span>`;
+  if(d<=3)  return `<span class="badge badge-accent">Exam in ${d} days</span>`;
+  if(d<=7)  return `<span class="badge badge-accent">Exam in ${d} days</span>`;
+  if(d<=14) return `<span class="badge badge-accent">Exam in ${d} days</span>`;
+  return `<span class="badge badge-accent">Exam in ${d} days</span>`;
+}
+function dueBadge(dateStr){
+  if(!dateStr) return '';
+  const d=daysUntil(dateStr);
+  if(d<0)   return `<span class="ai-tag due-done">Overdue</span>`;
+  if(d===0) return `<span class="ai-tag due-near">Today</span>`;
+  if(d<=2)  return `<span class="ai-tag due-near">In ${d}d</span>`;
+  if(d<=7)  return `<span class="ai-tag due-soon">In ${d}d</span>`;
+  return `<span class="ai-tag due-ok">${formatDate(dateStr)}</span>`;
+}
+function formatDate(s){ if(!s) return ''; const d=new Date(s); return `${d.getDate()} ${MONTHS[d.getMonth()]}`; }
+
+function updatePills(){
+  const cp=document.getElementById('cc-pomo'); if(cp) cp.textContent=pomoCount;
+}
+
+// COURSE MODAL
+function openCourseModal(id){
+  editingCourseId = id||null;
+  document.getElementById('cm-title').textContent = id ? 'Edit Course' : 'Add Course';
+  const c = id ? courses.find(c=>c.id===id) : null;
+  document.getElementById('cm-name').value   = c?.name   || '';
+  document.getElementById('cm-lhours').value = c?.lhours || '';
+  document.getElementById('cm-target').value = c?.target || '';
+  document.getElementById('cm-grade').value  = c?.grade  || '';
+  // Resources
+  const resList = document.getElementById('cm-resources-list');
+  resList.innerHTML = '';
+  (c?.resources || []).forEach(r => addResourceEntry(r));
+  const list = document.getElementById('cm-dates-list');
+  list.innerHTML = '';
+  const dates = c?.dates || [];
+  if(dates.length) dates.forEach(d => addDateEntry(d));
+  else addDateEntry();
+  document.getElementById('course-modal').classList.add('open');
+}
+
+function addDateEntry(data){
+  const list = document.getElementById('cm-dates-list');
+  const div = document.createElement('div');
+  div.className = 'date-entry';
+  div.innerHTML = `
+    <select class="de-type">
+      <option value="exam"    ${data?.type==='exam'?'selected':''}>Exam</option>
+      <option value="assign"  ${data?.type==='assign'?'selected':''}>Assignment</option>
+      <option value="quiz"    ${data?.type==='quiz'?'selected':''}>Quiz</option>
+      <option value="project" ${data?.type==='project'?'selected':''}>Project</option>
+      <option value="other"   ${data?.type==='other'?'selected':''}>Other</option>
+    </select>
+    <input type="date" class="de-date" value="${data?.date||''}">
+    <button class="de-del" type="button" onclick="this.closest('.date-entry').remove()">✕</button>
+  `;
+  list.appendChild(div);
+}
+
+function getDateEntries(){
+  return [...document.querySelectorAll('.date-entry')].map(el=>({
+    type: el.querySelector('.de-type').value,
+    date: el.querySelector('.de-date').value
+  })).filter(d => d.date);
+}
+
+function closeCourseModal(){ document.getElementById('course-modal').classList.remove('open'); }
+function saveCourse(){
+  const name = document.getElementById('cm-name').value.trim();
+  if(!name){ document.getElementById('cm-name').focus(); return; }
+  const dates = getDateEntries();
+  const data = {
+    name, lhours: document.getElementById('cm-lhours').value,
+    target: parseInt(document.getElementById('cm-target').value)||20,
+    grade: document.getElementById('cm-grade').value,
+    resources: getResourceEntries(),
+    dates, exam: dates.find(d=>d.type==='exam')?.date || ''
+  };
+  if(editingCourseId){
+    const idx = courses.findIndex(c=>c.id===editingCourseId);
+    if(idx !== -1) courses[idx] = {...courses[idx], ...data};
+  } else { courses.push({id: Date.now(), ...data}); }
+  save(); closeCourseModal(); renderAll();
+renderProfile();
+}
+
+function deleteCourse(id){
+  pendingDeleteCourseId = id;
+  document.getElementById('delete-course-modal').classList.add('open');
+}
+function confirmDeleteCourse(){
+  const id = pendingDeleteCourseId;
+  courses=courses.filter(c=>c.id!==id); assigns=assigns.filter(a=>a.courseId!==id); delete studyLog[id];
+  save(); renderAll(); renderProfile();
+  document.getElementById('delete-course-modal').classList.remove('open');
+  pendingDeleteCourseId = null;
+}
+function cancelDeleteCourse(){
+  document.getElementById('delete-course-modal').classList.remove('open');
+  pendingDeleteCourseId = null;
+}
+
+// ASSIGNMENT MODAL
+function openAssignModal(courseId){
+  document.getElementById('am-course-id').value = courseId;
+  ['am-title','am-weight','am-due','am-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('am-type').value='homework'; document.getElementById('am-priority').value='medium';
+  document.getElementById('assign-modal').classList.add('open');
+}
+function closeAssignModal(){ document.getElementById('assign-modal').classList.remove('open'); }
+function saveAssign(){
+  const title=document.getElementById('am-title').value.trim();
+  if(!title){ document.getElementById('am-title').focus(); return; }
+  assigns.push({ id:Date.now(), courseId:parseInt(document.getElementById('am-course-id').value), title, type:document.getElementById('am-type').value, weight:document.getElementById('am-weight').value, due:document.getElementById('am-due').value, priority:document.getElementById('am-priority').value, notes:document.getElementById('am-notes').value.trim(), done:false });
+  save(); closeAssignModal(); renderAll();
+renderProfile();
+}
+function toggleAssign(id){ const a=assigns.find(a=>a.id===id); if(a){ a.done=!a.done; save(); renderAll();
+renderProfile(); } }
+function deleteAssign(id){ assigns=assigns.filter(a=>a.id!==id); save(); renderAll();
+renderProfile(); }
+
+// RENDER COURSES
+function renderCourses(){
+  const el=document.getElementById('course-list');
+  if(!courses.length){ el.innerHTML=`<div class="empty anim"><div class="ei">📚</div><div class="et">No courses yet.<br>Tap "+ Add Course" to begin.</div></div>`; return; }
+  const sorted = [...courses].sort((a,b)=>{
+    const da = a.exam ? new Date(a.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    const db = b.exam ? new Date(b.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    return dashSortAsc ? da - db : db - da;
+  });
+  el.innerHTML = sorted.map((c,ci)=>{
+    const origIdx = courses.indexOf(c);
+    ci = origIdx;
+    const hex=getCourseHex(ci), emoji=getCourseEmoji(ci), col=getCourseColor(ci);
+    const ca=assigns.filter(a=>a.courseId===c.id), done=ca.filter(a=>a.done).length;
+    const studied=Math.round((studyLog[c.id]||0)/60);
+    const pct=c.target?Math.min(100,Math.round(studied/c.target*100)):0;
+    const du=daysUntil(c.exam);
+    const assignsHtml = ca.length ? ca.map(a=>`
+      <div class="assign-item anim ${a.done?'done-item':''}">
+        <input type="checkbox" class="ai-check" ${a.done?'checked':''} onchange="toggleAssign(${a.id})">
+        <div class="ai-body">
+          <div class="ai-name">${esc(a.title)}</div>
+          <div class="ai-meta">${dueBadge(a.due)}${PRIO_BADGES[a.priority]||''}${a.weight?`<span class="ai-tag weight-badge">${a.weight}%</span>`:''}</div>
+        </div>
+        <button class="ai-del" onclick="deleteAssign(${a.id})">✕</button>
+      </div>`).join('') : `<div style="padding:8px 16px 12px;font-size:12px;color:var(--text-3);">No assignments yet.</div>`;
+    return `
+    <div class="course-card anim">
+      <div class="course-header">
+        <div class="course-dot ${col}" style="color:${hex}">${emoji}</div>
+        <div class="course-info">
+          <div class="course-name">${esc(c.name)}</div>
+          <div class="course-meta">${c.lhours?c.lhours+'h/wk':''}${c.grade?' · Target: '+c.grade+'%':''}</div>
+        </div>
+        <div class="course-actions">
+          <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Edit</button>
+          <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Del</button>
+        </div>
+      </div>
+      <div class="course-stats">
+        <div class="cs-stat"><span class="cs-val" style="color:${hex}">${studied}h</span><span class="cs-lbl">Studied</span></div>
+        <div class="cs-stat"><span class="cs-val" style="color:${hex}">${done}/${ca.length}</span><span class="cs-lbl">Done</span></div>
+        <div class="cs-stat"><span class="cs-val">${du!==null?(du>=0?du+'d':'✓'):'—'}</span><span class="cs-lbl">To Exam</span></div>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-meta"><span>Study progress</span><span style="color:${hex};font-weight:600">${pct}%</span></div>
+        <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${hex}"></div></div>
+      </div>
+      <div style="padding:4px 16px 10px;display:flex;gap:5px;flex-wrap:wrap">${examBadge(c.exam)}</div>
+      <div class="divider"></div>
+      <div style="padding:8px 16px 6px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:12px;font-weight:600;color:var(--text)">Assignments</span>
+        <button class="sh-action" onclick="openAssignModal(${c.id})">+ Add</button>
+      </div>
+      <div class="assign-list">${assignsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+// RENDER DASHBOARD
+function renderDash(){
+  const el=document.getElementById('dash-list');
+  if(!courses.length){ el.innerHTML=`<div class="empty anim"><div class="ei">🎓</div><div class="et">Add your first course<br>to see your overview.</div></div>`; return; }
+
+  // Exam stats
+  const withExam = courses.filter(c=>c.exam);
+  const done = withExam.filter(c=>daysUntil(c.exam)<0).length;
+  const upcoming = withExam.filter(c=>daysUntil(c.exam)>=0).length;
+  const statsEl = document.getElementById('exam-stats');
+  if(statsEl) statsEl.innerHTML = `
+    <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 12px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:10px;font-weight:500;color:var(--text-3);">Exams done</div>
+      <div style="font-size:16px;font-weight:800;color:var(--green);">${done}</div>
+    </div>
+    <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px 12px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:10px;font-weight:500;color:var(--text-3);">Upcoming exams</div>
+      <div style="font-size:16px;font-weight:800;color:var(--accent);">${upcoming}</div>
+    </div>`;
+
+  // Study hours stat
+  const totalMins = Object.values(studyLog).reduce((s,v)=>s+(v||0), 0);
+  const totalHours = (totalMins / 60).toFixed(1);
+  const goalHours = courses.reduce((s,c)=>s+(parseFloat(c.target)||0), 0);
+  const pct = goalHours > 0 ? Math.min(100, Math.round(totalMins / 60 / goalHours * 100)) : 0;
+  const hoursEl = document.getElementById('study-hours-stat');
+  if(hoursEl) hoursEl.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:600;color:var(--text-2);">Hours studied this semester</div>
+        <div style="font-size:13px;font-weight:800;color:var(--accent);">${totalHours}h${goalHours ? ' <span style="font-size:10px;font-weight:500;color:var(--text-3);">/ '+goalHours+'h goal</span>' : ''}</div>
+      </div>
+      <div style="height:6px;background:var(--surface-2);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .4s;"></div>
+      </div>
+    </div>`;
+
+  const sorted = [...courses].sort((a,b)=>{
+    const da = a.exam ? new Date(a.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    const db = b.exam ? new Date(b.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    return dashSortAsc ? da - db : db - da;
+  });
+
+  const upcoming_courses = sorted.filter(c => !c.exam || daysUntil(c.exam) >= 0);
+  const past_courses     = sorted.filter(c => c.exam && daysUntil(c.exam) < 0)
+                                 .sort((a,b)=> new Date(b.exam)-new Date(a.exam));
+
+  const courseCard = (c) => {
+    const ci = courses.indexOf(c);
+    const hex=getCourseHex(ci), col=getCourseColor(ci), emoji=getCourseEmoji(ci);
+    const days = c.exam ? daysUntil(c.exam) : null;
+    const daysLabel = days === null ? '' : days < 0 ? 'Passed' : days === 0 ? 'Today' : `${days}d`;
+    const daysColor = days === null ? '' : days < 0 ? 'var(--text-3)' : days <= 3 ? '#dc2626' : days <= 7 ? '#ea580c' : '#16a34a';
+    const daysBg   = days === null ? '' : days < 0 ? 'var(--surface-2)' : days <= 3 ? '#fef2f2' : days <= 7 ? '#fff7ed' : '#f0fdf4';
+    return `
+    <div class="dash-course anim" onclick="openCourseDetail(${c.id})" style="cursor:pointer;">
+      <div class="dc-header">
+        <div class="dc-dot ${col}" style="color:${hex}">${emoji}</div>
+        <div class="dc-info">
+          <div class="dc-name">${esc(c.name)}</div>
+          ${c.exam ? `<div class="dc-sub">${new Date(c.exam).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>` : `<div class="dc-sub" style="color:var(--text-3)">No exam date set</div>`}
+        </div>
+        ${daysLabel ? `<div style="margin-left:auto;flex-shrink:0;background:${daysBg};color:${daysColor};border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;line-height:1;text-align:center;">${daysLabel}<div style="font-size:9px;font-weight:500;margin-top:2px;opacity:.75;">${days < 0 ? 'exam' : 'to exam'}</div></div>` : ''}
+      </div>
+    </div>`;
+  };
+
+  el.innerHTML = upcoming_courses.map(courseCard).join('');
+
+  const pastSection = document.getElementById('past-exams-section');
+  const pastList    = document.getElementById('past-exams-list');
+  if(past_courses.length > 0){
+    pastList.innerHTML = past_courses.map(c => {
+      const ci = courses.indexOf(c);
+      const hex=getCourseHex(ci), col=getCourseColor(ci), emoji=getCourseEmoji(ci);
+      return `
+      <div class="dash-course anim" onclick="openCourseDetail(${c.id})" style="cursor:pointer;opacity:0.72;">
+        <div class="dc-header">
+          <div class="dc-dot ${col}" style="color:${hex}">${emoji}</div>
+          <div class="dc-info">
+            <div class="dc-name" style="color:var(--text-2);">${esc(c.name)}</div>
+            <div class="dc-sub">${new Date(c.exam).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>
+          <div style="margin-left:auto;flex-shrink:0;background:var(--surface-2);color:var(--text-3);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;line-height:1;text-align:center;">✓<div style="font-size:9px;font-weight:500;margin-top:2px;">done</div></div>
+        </div>
+      </div>`;
+    }).join('');
+    pastSection.style.display = 'block';
+  } else {
+    pastSection.style.display = 'none';
+  }
+}
+
+// POMODORO
+let selectedSubjectId=null, timerRunning=false, timerInterval=null, timerDuration=25*60, timerLeft=25*60;
+
+function renderTimerSubjects(){
+  const row=document.getElementById('pomo-subjects');
+  if(!courses.length){ row.innerHTML=`<span style="font-size:12px;color:var(--text-3);padding:4px">Add courses first</span>`; renderGoals(); return; }
+  row.innerHTML = courses.map((c,ci)=>`<button class="psub-btn ${selectedSubjectId===c.id?'active':''}" onclick="selectSubject(${c.id})">${getCourseEmoji(ci)} ${esc(c.name)}</button>`).join('');
+  if(!selectedSubjectId&&courses.length) selectSubject(courses[0].id, true);
+  renderGoals();
+}
+function selectSubject(id,silent){
+  selectedSubjectId=id;
+  const c=courses.find(c=>c.id===id);
+  document.getElementById('pomo-cur-sub').textContent=c?c.name:'No subject';
+  if(!silent) renderTimerSubjects();
+}
+function adjDur(delta){
+  if(timerRunning) return;
+  const cur = Math.round(timerDuration/60);
+  const newVal = Math.max(1, Math.min(180, cur + delta));
+  timerDuration = newVal * 60;
+  timerLeft = timerDuration;
+  document.getElementById('dur-label').textContent = newVal + ' min';
+  document.getElementById('dur-inline').value = newVal;
+  updatePomoDisplay();
+}
+let _editDurPrev = 25;
+function startEditDur(){
+  if(timerRunning) return;
+  _editDurPrev = Math.round(timerDuration/60);
+  const inp = document.getElementById('dur-inline');
+  inp.value = _editDurPrev;
+  document.getElementById('pomo-time-display').style.display = 'none';
+  inp.style.display = 'block';
+  inp.focus(); inp.select();
+  document.getElementById('pomo-cur-sub').textContent = 'Enter minutes';
+}
+function finishEditDur(){
+  const inp = document.getElementById('dur-inline');
+  const v = Math.max(1, Math.min(180, parseInt(inp.value)||_editDurPrev));
+  timerDuration = v * 60;
+  timerLeft = timerDuration;
+  document.getElementById('dur-label').textContent = v + ' min';
+  inp.style.display = 'none';
+  document.getElementById('pomo-time-display').style.display = '';
+  const sub = document.getElementById('pomo-cur-sub');
+  sub.textContent = selectedSubjectId ? (courses.find(c=>c.id===selectedSubjectId)?.name || 'No subject') : 'Tap time to set';
+  updatePomoDisplay();
+}
+function cancelEditDur(){
+  const inp = document.getElementById('dur-inline');
+  inp.style.display = 'none';
+  document.getElementById('pomo-time-display').style.display = '';
+  document.getElementById('pomo-cur-sub').textContent = selectedSubjectId ? (courses.find(c=>c.id===selectedSubjectId)?.name || 'No subject') : 'Tap time to set';
+}
+function onDurChange(){
+  const v = parseInt(document.getElementById('dur-inline').value)||25;
+  timerDuration = v*60;
+  if(!timerRunning){ timerLeft = timerDuration; updatePomoDisplay(); }
+}
+function togglePomo(){
+  if(!selectedSubjectId&&courses.length){ alert('Select a subject first'); return; }
+  if(timerRunning){
+    clearInterval(timerInterval); timerRunning=false;
+    document.getElementById('pb-start').textContent='▶ Resume';
+    document.getElementById('pb-stop').style.display='inline-block';
+  } else {
+    timerRunning=true;
+    document.getElementById('pb-start').textContent='⏸ Pause';
+    document.getElementById('pb-stop').style.display='inline-block';
+    timerInterval=setInterval(()=>{
+      timerLeft--; updatePomoDisplay();
+      if(timerLeft%60===0&&selectedSubjectId){ studyLog[selectedSubjectId]=(studyLog[selectedSubjectId]||0)+60; save(); renderGoals(); renderDash(); updatePills(); }
+      if(timerLeft<=0){
+        clearInterval(timerInterval); timerRunning=false;
+        if(selectedSubjectId){ const rem=timerDuration%60; if(rem){ studyLog[selectedSubjectId]=(studyLog[selectedSubjectId]||0)+rem; save(); } }
+        pomoCount++; save(); updatePills();
+        document.getElementById('pb-start').textContent='▶ Start';
+        document.getElementById('pb-stop').style.display='none';
+        document.getElementById('pomo-session-count').textContent=pomoCount;
+        timerLeft=timerDuration; updatePomoDisplay(); renderGoals(); renderDash();
+        let f=0,orig=document.title,fl=setInterval(()=>{document.title=f++%2===0?'Session complete':orig;if(f>8){clearInterval(fl);document.title=orig;}},500);
+      }
+    },1000);
+  }
+}
+function stopPomo(){
+  clearInterval(timerInterval); timerRunning=false; timerLeft=timerDuration; updatePomoDisplay();
+  document.getElementById('pb-start').textContent='▶ Start';
+  document.getElementById('pb-stop').style.display='none';
+}
+function resetPomo(){ stopPomo(); }
+function updatePomoDisplay(){
+  const m=Math.floor(timerLeft/60).toString().padStart(2,'0'), s=(timerLeft%60).toString().padStart(2,'0');
+  document.getElementById('pomo-time').textContent=`${m}:${s}`;
+  const circ=2*Math.PI*78, ring=document.getElementById('pomo-ring');
+  ring.style.strokeDasharray=circ; ring.style.strokeDashoffset=circ*(1-timerLeft/timerDuration);
+  const pct=timerLeft/timerDuration;
+  ring.style.stroke=pct>0.5?'var(--accent)':pct>0.25?'var(--amber)':'var(--red)';
+}
+function renderGoals(){
+  const el=document.getElementById('goal-list');
+  if(!courses.length){ el.innerHTML=`<div style="text-align:center;padding:12px;font-size:12px;color:var(--text-3)">Add courses to track goals</div>`; return; }
+  const sorted = [...courses].sort((a,b)=>{
+    const da = a.exam ? new Date(a.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    const db = b.exam ? new Date(b.exam) : (dashSortAsc ? new Date('9999') : new Date(0));
+    return dashSortAsc ? da - db : db - da;
+  });
+  el.innerHTML = sorted.map((c,ci)=>{
+    const origIdx = courses.indexOf(c);
+    ci = origIdx;
+    const hex=getCourseHex(ci), mins=studyLog[c.id]||0, studiedH=(mins/60).toFixed(1);
+    const target=c.target||20, pct=Math.min(100,Math.round(mins/60/target*100));
+    const active=selectedSubjectId===c.id;
+    return `<div class="goal-item" style="${active?'border-color:var(--accent);background:var(--accent-light)':''}">
+      <div class="gi-top"><span class="gi-name">${getCourseEmoji(ci)} ${esc(c.name)}</span><span class="gi-hours" style="color:${hex}">${studiedH}h / ${target}h</span></div>
+      <div class="gi-track"><div class="gi-fill" style="width:${pct}%;background:${hex}"></div></div>
+      <div class="gi-sub"><span>${pct}%</span><span>${Math.max(0,target-parseFloat(studiedH)).toFixed(1)}h left</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll(){ updatePills(); renderCourses(); renderDash(); renderTimerSubjects(); }
+
+// MODAL CLOSE ON BACKDROP
+document.getElementById('course-modal').addEventListener('click',function(e){ if(e.target===this) closeCourseModal(); });
+document.getElementById('assign-modal').addEventListener('click',function(e){ if(e.target===this) closeAssignModal(); });
+
+// HAMBURGER DRAWER
+const hamburger=document.getElementById('hamburger');
+const drawer=document.getElementById('drawer');
+const drawerOverlay=document.getElementById('drawer-overlay');
+
+hamburger.addEventListener('click',()=>{
+  const open=hamburger.classList.toggle('open');
+  drawer.classList.toggle('open',open);
+  drawerOverlay.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+  if(open) updateDrawerActive();
+});
+function closeDrawer(){
+  hamburger.classList.remove('open'); drawer.classList.remove('open'); drawerOverlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+function toggleSidebar(){
+  const sidebar = document.querySelector('.sidebar');
+  const main = document.querySelector('.main-content');
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  main.classList.toggle('expanded', isCollapsed);
+}
+
+function drawerGoTo(page){
+  closeDrawer();
+  goTab(page, null, {dash:'ni-dash',courses:'ni-courses',timer:'ni-timer',cal:'ni-cal',profile:'ni-profile'}[page]);
+  if(page==='grade') calcGrade();
+}
+function updateDrawerActive(){
+  const active=document.querySelector('.page.active')?.id?.replace('page-','');
+  ['dash','courses','timer','cal'].forEach(p=>{ document.getElementById('di-'+p)?.classList.toggle('active-item',p===active); });
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+
+// ── CALENDAR ──
+let calEvents = JSON.parse(safeGet('sos_cal_events', '[]') || '[]');
+let calViewDate = new Date();
+let calView = 'week';
+let editingEvId = null;
+
+const WEEK_DAYS_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function saveCalEvents(){ safeSet('sos_cal_events', JSON.stringify(calEvents)); }
+
+function calNav(dir){
+  if(calView==='week') calViewDate = new Date(calViewDate.getTime() + dir*7*86400000);
+  else { calViewDate.setMonth(calViewDate.getMonth()+dir); calViewDate = new Date(calViewDate); }
+  renderCalendar();
+}
+function calGoToday(){ calViewDate = new Date(); renderCalendar(); }
+function setCalView(v){
+  calView = v;
+  document.getElementById('cvt-week').classList.toggle('active', v==='week');
+  document.getElementById('cvt-month').classList.toggle('active', v==='month');
+  renderCalendar();
+}
+
+function getWeekStart(d){
+  const s = new Date(d); s.setHours(0,0,0,0);
+  s.setDate(s.getDate() - (s.getDay()+6)%7);
+  return s;
+}
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function courseColorForId(courseId){
+  if(!courseId) return '#8a95a8';
+  const idx = courses.findIndex(c=>c.id===parseInt(courseId));
+  return idx>=0 ? CCOLORS[idx%CCOLORS.length] : '#8a95a8';
+}
+
+function renderCalendar(){
+  const wrap = document.getElementById('cal-grid-wrap');
+  if(!wrap) return;
+  if(calView==='week') renderWeekView(wrap);
+  else renderMonthView(wrap);
+  updateCalLabel();
+}
+
+function updateCalLabel(){
+  const el = document.getElementById('cal-label'); if(!el) return;
+  if(calView==='week'){
+    const ws = getWeekStart(calViewDate);
+    const we = new Date(ws.getTime()+6*86400000);
+    el.textContent = ws.getMonth()===we.getMonth() ? `${FULL_MONTHS[ws.getMonth()]} ${ws.getFullYear()}` : `${FULL_MONTHS[ws.getMonth()].slice(0,3)} – ${FULL_MONTHS[we.getMonth()].slice(0,3)} ${we.getFullYear()}`;
+  } else { el.textContent = `${FULL_MONTHS[calViewDate.getMonth()]} ${calViewDate.getFullYear()}`; }
+}
+
+function renderWeekView(wrap){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const ws = getWeekStart(calViewDate);
+  const SLOT_H = 52, START_H = 7, END_H = 23;
+  const days = Array.from({length:7},(_,i)=>{ const d=new Date(ws); d.setDate(ws.getDate()+i); return d; });
+  let html = `<div class="cal-week-grid" style="min-height:${(END_H-START_H)*SLOT_H+44}px">`;
+  html += `<div class="cal-corner" style="height:44px"></div>`;
+  days.forEach(d=>{
+    const isToday = d.getTime()===today.getTime();
+    html += `<div class="cal-day-head ${isToday?'today':''}"><div class="cal-day-name">${WEEK_DAYS_SHORT[(d.getDay()+6)%7]}</div><div class="cal-day-num">${d.getDate()}</div></div>`;
+  });
+  for(let h=START_H; h<END_H; h++){
+    const label = h<12?h+'am':h===12?'12pm':(h-12)+'pm';
+    html += `<div class="cal-time-label">${label}</div>`;
+    days.forEach(d=>{
+      const dkey=dateKey(d);
+      html += `<div class="cal-cell" data-date="${dkey}" data-hour="${h}" onclick="onCellClick('${dkey}',${h})"></div>`;
+    });
+  }
+  html += '</div>';
+  wrap.innerHTML = html;
+
+  days.forEach(d=>{
+    const dkey=dateKey(d);
+    const dayEvs=calEvents.filter(e=>e.date===dkey);
+    dayEvs.forEach(ev=>{
+      const [sh,sm]=ev.start.split(':').map(Number), [eh,em]=ev.end.split(':').map(Number);
+      const durMin=Math.max(30,(eh*60+em)-(sh*60+sm));
+      const topPx=44+(sh-START_H)*SLOT_H+(sm/60)*SLOT_H;
+      const heightPx=Math.max(20,(durMin/60)*SLOT_H-2);
+      const color=courseColorForId(ev.courseId);
+      const colCells=wrap.querySelectorAll(`.cal-cell[data-date="${dkey}"]`);
+      if(colCells.length>0){
+        const firstCell=colCells[0];
+        let dayOverlay=wrap.querySelector(`[data-day-overlay="${dkey}"]`);
+        if(!dayOverlay){
+          dayOverlay=document.createElement('div');
+          dayOverlay.setAttribute('data-day-overlay',dkey);
+          dayOverlay.style.cssText='position:absolute;top:0;pointer-events:none;z-index:3;';
+          wrap.style.position='relative';
+          wrap.appendChild(dayOverlay);
+          requestAnimationFrame(()=>{
+            const wcr=wrap.getBoundingClientRect(), cr=firstCell.getBoundingClientRect();
+            dayOverlay.style.left=(cr.left-wcr.left+wrap.scrollLeft)+'px';
+            dayOverlay.style.width=cr.width+'px';
+            dayOverlay.style.height='100%';
+          });
+        }
+        const evEl=document.createElement('div');
+        evEl.className='cal-event';
+        evEl.style.cssText=`top:${topPx}px;height:${heightPx}px;background:${color}18;border-left:2px solid ${color};color:${color};`;
+        evEl.innerHTML=`<div class="cal-event-title">${esc(ev.title)}</div><div class="cal-event-time">${ev.start}–${ev.end}</div>`;
+        evEl.style.pointerEvents='all';
+        evEl.onclick=(e)=>{ e.stopPropagation(); openEvModal(ev.date,null,ev.id); };
+        dayOverlay.appendChild(evEl);
+      }
+    });
+  });
+  requestAnimationFrame(()=>{ wrap.scrollTop=44+(8-START_H)*SLOT_H; });
+}
+
+function renderMonthView(wrap){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const y=calViewDate.getFullYear(), mo=calViewDate.getMonth();
+  const firstDay=new Date(y,mo,1);
+  const startDow=(firstDay.getDay()+6)%7;
+  let html=`<div class="cal-month-grid">`;
+  WEEK_DAYS_SHORT.forEach(d=>{ html+=`<div class="cal-month-head">${d}</div>`; });
+  let day=new Date(firstDay); day.setDate(day.getDate()-startDow);
+  for(let i=0;i<42;i++){
+    const dkey=dateKey(day), isToday=day.getTime()===today.getTime(), isOther=day.getMonth()!==mo;
+    const dayEvs=calEvents.filter(e=>e.date===dkey).slice(0,3);
+    html+=`<div class="cal-month-cell ${isToday?'today':''} ${isOther?'other-month':''}" onclick="onMonthCellClick('${dkey}')">
+      <div class="cal-mday">${day.getDate()}</div>
+      ${dayEvs.map(ev=>`<div class="cal-ev-dot" style="background:${courseColorForId(ev.courseId)}" onclick="event.stopPropagation();openEvModal('${dkey}',null,${ev.id})">${esc(ev.title)}</div>`).join('')}
+    </div>`;
+    day.setDate(day.getDate()+1);
+    if(i%7===6&&day>new Date(y,mo+1,0)&&i>27) break;
+  }
+  html+='</div>'; wrap.innerHTML=html;
+}
+
+function onCellClick(date,hour){ openEvModal(date,`${String(hour).padStart(2,'0')}:00`); }
+function onMonthCellClick(date){ openEvModal(date,'09:00'); }
+
+function openEvModal(date,startTime,evId){
+  editingEvId=evId||null;
+  const ev=evId?calEvents.find(e=>e.id===evId):null;
+  document.getElementById('ev-modal-title').textContent=ev?'Edit Block':'Add Study Block';
+  document.getElementById('ev-id').value=ev?.id||'';
+  document.getElementById('ev-title').value=ev?.title||'';
+  document.getElementById('ev-date').value=ev?.date||date||'';
+  document.getElementById('ev-start').value=ev?.start||startTime||'09:00';
+  document.getElementById('ev-end').value=ev?.end||(startTime?`${String(parseInt(startTime)+1).padStart(2,'0')}:00`:'10:00');
+  document.getElementById('ev-notes').value=ev?.notes||'';
+  const sel=document.getElementById('ev-course');
+  sel.innerHTML='<option value="">— No course —</option>'+courses.map((c,ci)=>`<option value="${c.id}" ${ev?.courseId==c.id?'selected':''}>${getCourseEmoji(ci)} ${esc(c.name)}</option>`).join('');
+  sel.value=ev?.courseId||'';
+  document.getElementById('ev-delete-btn').style.display=ev?'':'none';
+  document.getElementById('ev-modal').classList.add('open');
+}
+function closeEvModal(){ document.getElementById('ev-modal').classList.remove('open'); }
+function saveCalEvent(){
+  const title=document.getElementById('ev-title').value.trim();
+  if(!title){ document.getElementById('ev-title').focus(); return; }
+  const data={title,date:document.getElementById('ev-date').value,start:document.getElementById('ev-start').value,end:document.getElementById('ev-end').value,courseId:document.getElementById('ev-course').value,notes:document.getElementById('ev-notes').value.trim()};
+  if(editingEvId){ const idx=calEvents.findIndex(e=>e.id===editingEvId); if(idx!==-1) calEvents[idx]={...calEvents[idx],...data}; }
+  else calEvents.push({id:Date.now(),...data});
+  saveCalEvents(); closeEvModal(); renderCalendar();
+}
+function deleteCalEvent(){
+  if(!editingEvId||!confirm('Delete this event?')) return;
+  calEvents=calEvents.filter(e=>e.id!==editingEvId);
+  saveCalEvents(); closeEvModal(); renderCalendar();
+}
+document.getElementById('ev-modal').addEventListener('click',function(e){ if(e.target===this) closeEvModal(); });
+
+
+
+// RESOURCES
+function addResourceEntry(data){
+  const list = document.getElementById('cm-resources-list');
+  const div = document.createElement('div');
+  div.className = 'resource-entry';
+  const type = data?.type || 'link';
+  div.innerHTML = `
+    <select class="re-type" onchange="onResourceTypeChange(this)">
+      <option value="link"  ${type==='link'?'selected':''}>🔗 Link</option>
+      <option value="pdf"   ${type==='pdf'?'selected':''}>📄 PDF</option>
+      <option value="ppt"   ${type==='ppt'?'selected':''}>📊 PPT</option>
+      <option value="word"  ${type==='word'?'selected':''}>📝 Word</option>
+    </select>
+    <div class="re-input-wrap" style="flex:1;display:flex;align-items:center;gap:6px;min-width:0;">
+      ${type==='link'
+        ? `<input type="text" class="re-value" placeholder="https://..." value="${data?.value||''}">`
+        : `<input type="file" class="re-file" accept="${getAccept(type)}">`
+      }
+      ${data?.fileName ? `<span class="resource-file-name">${esc(data.fileName)}</span>` : ''}
+    </div>
+    <button class="re-del" type="button" onclick="this.closest('.resource-entry').remove()">✕</button>
+  `;
+  // Store file data if editing
+  if(data?.fileData) div.dataset.fileData = data.fileData;
+  if(data?.fileName) div.dataset.fileName = data.fileName;
+  list.appendChild(div);
+  // File change handler
+  const fileInput = div.querySelector('.re-file');
+  if(fileInput) fileInput.addEventListener('change', onResourceFileChange);
+}
+
+function getAccept(type){
+  if(type==='pdf') return '.pdf';
+  if(type==='ppt') return '.ppt,.pptx';
+  if(type==='word') return '.doc,.docx';
+  return '*';
+}
+
+function onResourceTypeChange(sel){
+  const entry = sel.closest('.resource-entry');
+  const type = sel.value;
+  const wrap = entry.querySelector('.re-input-wrap');
+  if(type==='link'){
+    wrap.innerHTML = `<input type="text" class="re-value" placeholder="https://...">`;
+  } else {
+    wrap.innerHTML = `<input type="file" class="re-file" accept="${getAccept(type)}">`;
+    wrap.querySelector('.re-file').addEventListener('change', onResourceFileChange);
+  }
+  delete entry.dataset.fileData;
+  delete entry.dataset.fileName;
+}
+
+function onResourceFileChange(e){
+  const file = e.target.files[0]; if(!file) return;
+  const entry = e.target.closest('.resource-entry');
+  entry.dataset.fileName = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    entry.dataset.fileData = ev.target.result;
+    // Show filename
+    const wrap = entry.querySelector('.re-input-wrap');
+    let nameEl = wrap.querySelector('.resource-file-name');
+    if(!nameEl){ nameEl = document.createElement('span'); nameEl.className='resource-file-name'; wrap.appendChild(nameEl); }
+    nameEl.textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+function getResourceEntries(){
+  return [...document.querySelectorAll('.resource-entry')].map(el=>{
+    const type = el.querySelector('.re-type').value;
+    if(type==='link'){
+      const val = el.querySelector('.re-value')?.value?.trim();
+      return val ? {type, value: val} : null;
+    } else {
+      return el.dataset.fileData ? {type, value: el.dataset.fileData, fileName: el.dataset.fileName} : null;
+    }
+  }).filter(Boolean);
+}
+
+// COURSE DETAIL MODAL
+const TYPE_LABELS = {homework:'Homework',project:'Project',essay:'Essay',lab:'Lab',quiz:'Quiz',presentation:'Presentation',other:'Other'};
+
+function openCourseDetail(id){
+  const c = courses.find(c=>c.id===id); if(!c) return;
+  const ci = courses.indexOf(c);
+  const hex = getCourseHex(ci), col = getCourseColor(ci), emoji = getCourseEmoji(ci);
+  const studied = Math.round((studyLog[id]||0)/60);
+  const target = c.target||20;
+  const pct = Math.min(100, Math.round(studied/target*100));
+  const ca = assigns.filter(a=>a.courseId===id);
+  const done = ca.filter(a=>a.done).length;
+
+  const datesHtml = (c.dates||[]).length ? `
+    <div class="cdm-section">Dates</div>
+    <div class="cdm-dates">
+      ${c.dates.map(d=>`
+        <div class="cdm-date-row">
+          <span class="cdm-date-type">${d.type}</span>
+          <span class="cdm-date-val">${formatDate(d.date)}</span>
+          ${examBadge(d.date)}
+        </div>`).join('')}
+    </div>` : '';
+
+  const assignsHtml = ca.length ? `
+    <div class="cdm-section">Assignments</div>
+    <div class="cdm-assigns">
+      ${ca.map(a=>`
+        <div class="cdm-assign-row">
+          <input type="checkbox" class="ai-check" ${a.done?'checked':''} onchange="toggleAssign(${a.id})" onclick="event.stopPropagation()">
+          <span class="cdm-assign-name">${esc(a.title)}</span>
+          ${dueBadge(a.due)}
+        </div>`).join('')}
+    </div>` : '';
+
+  const notesHtml = '';
+  const resourcesHtml = (c.resources||[]).length ? `
+    <div class="cdm-section">Resources</div>
+    <div class="cdm-dates">
+      \${(c.resources||[]).map(r=>{
+        const icons = {link:'🔗',pdf:'📄',ppt:'📊',word:'📝'};
+        const icon = icons[r.type]||'📎';
+        if(r.type==='link'){
+          return \`<div class="cdm-date-row">
+            <span class="cdm-date-type">\${icon} Link</span>
+            <a href="\${esc(r.value)}" target="_blank" class="resource-link">\${esc(r.value)}</a>
+          </div>\`;
+        } else {
+          return \`<div class="cdm-date-row">
+            <span class="cdm-date-type">\${icon} \${r.type.toUpperCase()}</span>
+            <a href="\${r.value}" download="\${esc(r.fileName||'file')}" class="resource-link">\${esc(r.fileName||'Download')}</a>
+          </div>\`;
+        }
+      }).join('')}
+    </div>` : '';
+
+  document.getElementById('cdm-content').innerHTML = `
+    <div class="cdm-header">
+      <div class="cdm-dot ${col}" style="color:${hex}">${emoji}</div>
+      <div>
+        <div class="cdm-name">${esc(c.name)}</div>
+        <div class="cdm-meta">${c.lhours?c.lhours+'h/week':''}${c.grade?' · Goal: '+c.grade+'%':''}</div>
+      </div>
+    </div>
+
+    <div class="cdm-stats">
+      <div class="cdm-stat">
+        <div class="cdm-stat-val" style="color:${hex}">${studied}h</div>
+        <div class="cdm-stat-lbl">Studied</div>
+      </div>
+      <div class="cdm-stat">
+        <div class="cdm-stat-val" style="color:${hex}">${done}/${ca.length}</div>
+        <div class="cdm-stat-lbl">Done</div>
+      </div>
+      <div class="cdm-stat">
+        <div class="cdm-stat-val">${c.exam&&daysUntil(c.exam)!==null?(daysUntil(c.exam)>=0?daysUntil(c.exam)+'d':'✓'):'—'}</div>
+        <div class="cdm-stat-lbl">To Exam</div>
+      </div>
+    </div>
+
+    <div class="cdm-prog-wrap">
+      <div class="cdm-section">Study Progress</div>
+      <div class="cdm-prog-label"><span>${studied}h studied of ${target}h goal</span><span style="color:${hex};font-weight:600">${pct}%</span></div>
+      <div class="cdm-prog-track"><div class="cdm-prog-fill" style="width:${pct}%;background:${hex}"></div></div>
+    </div>
+
+    ${datesHtml}
+    ${assignsHtml}
+    ${notesHtml}
+    ${resourcesHtml}
+
+    <div class="cdm-actions">
+      <button class="cdm-btn-edit" onclick="closeCourseDetail();openCourseModal(${id})">Edit Course</button>
+      <button class="cdm-btn-close" onclick="closeCourseDetail()">Close</button>
+    </div>
+  `;
+  document.getElementById('course-detail-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeCourseDetail(){
+  document.getElementById('course-detail-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('course-detail-modal').addEventListener('click', function(e){ if(e.target===this) closeCourseDetail(); });
+
+// PROFILE
+let profileData = JSON.parse(safeGet('sos_profile', JSON.stringify({name:'Shoval',degree:'Computer Science',years:'3',curyear:'2',semsperyr:'3',cursem:'2'})));
+let editingProfileField = null;
+
+const PROFILE_CONFIGS = {
+  name:      {title:'Name',              label:'Full name',                    type:'text',     placeholder:'e.g. Alex Cohen'},
+  degree:    {title:'Degree',            label:'Degree / Program',             type:'text',     placeholder:'e.g. B.Sc. Computer Science'},
+  years:     {title:'Years of Study',    label:'Total number of years',        type:'number',   placeholder:'e.g. 4'},
+  curyear:   {title:'Current Year',      label:'Current / Total (e.g. 2 / 4)', type:'fraction', numPlaceholder:'Year',   denKey:'years'},
+  semsperyr: {title:'Semesters / Year',  label:'Current / Total (e.g. 1 / 2)', type:'fraction', numPlaceholder:'Cur',    denKey:'semsTotal'},
+  cursem:    {title:'Current Semester',  label:'Current / Total (e.g. 3 / 8)', type:'fraction', numPlaceholder:'Cur',    denKey:'semsTotalComputed'},
+};
+
+function saveProfileData(){ safeSet('sos_profile', JSON.stringify(profileData)); }
+
+function getTotalSems(){
+  const y = parseInt(profileData.years||0);
+  const s = parseInt(profileData.semsperyr||0);
+  return (y && s) ? y*s : (profileData.semsTotalComputed || '');
+}
+
+function renderProfile(){
+  const av = document.getElementById('topbar-avatar');
+  if(av && profileData.name) av.textContent = profileData.name.charAt(0).toUpperCase();
+  if(profileData.photo){
+    const img=document.getElementById('profile-photo-img');
+    const ph=document.getElementById('profile-photo-placeholder');
+    if(img&&ph){ img.src=profileData.photo; img.style.display='block'; ph.style.display='none'; }
+  }
+  const totalSems = getTotalSems();
+  const display = {
+    name:      profileData.name || '—',
+    degree:    profileData.degree || '—',
+    years:     profileData.years || '—',
+    curyear:   profileData.curyear ? (profileData.years ? profileData.curyear+'/'+profileData.years : profileData.curyear) : '—',
+    semsperyr: profileData.semsperyr ? (profileData.semsTotal ? profileData.semsperyr+'/'+profileData.semsTotal : profileData.semsperyr) : '—',
+    cursem:    profileData.cursem ? (totalSems ? profileData.cursem+'/'+totalSems : profileData.cursem) : '—',
+  };
+  Object.entries(display).forEach(([key,val])=>{
+    const el=document.getElementById('pf-'+key+'-display');
+    if(!el) return;
+    el.textContent=val;
+    el.classList.toggle('filled', val!=='—');
+  });
+}
+
+function onProfilePhotoChange(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{ profileData.photo=ev.target.result; saveProfileData(); renderProfile(); };
+  reader.readAsDataURL(file);
+}
+
+function editProfileField(key){
+  editingProfileField=key;
+  const cfg=PROFILE_CONFIGS[key];
+  document.getElementById('pem-title').textContent=cfg.title;
+  document.getElementById('pem-label').textContent=cfg.label;
+  const wrap=document.getElementById('pem-input-wrap');
+  if(cfg.type==='fraction'){
+    const totalSems=getTotalSems();
+    const denVal = key==='curyear' ? (profileData.years||'') : key==='semsperyr' ? (profileData.semsTotal||'') : totalSems;
+    const denReadonly = key==='cursem' ? 'readonly style="background:var(--surface-2);color:var(--text-3)"' : '';
+    wrap.innerHTML=`<div style="display:flex;align-items:center;gap:10px;">
+      <input id="pem-num" type="number" min="1" value="${profileData[key]||''}" placeholder="${cfg.numPlaceholder}" style="flex:1;text-align:center;font-size:20px;font-weight:700;">
+      <span style="font-size:22px;font-weight:300;color:var(--text-3)">/</span>
+      <input id="pem-den" type="number" min="1" value="${denVal}" placeholder="Total" ${denReadonly} style="flex:1;text-align:center;font-size:20px;font-weight:700;">
+    </div>`;
+  } else {
+    wrap.innerHTML=`<input id="pem-val" type="${cfg.type}" value="${profileData[key]||''}" placeholder="${cfg.placeholder}">`;
+  }
+  document.getElementById('profile-edit-modal').classList.add('open');
+  setTimeout(()=>{ (document.getElementById('pem-val')||document.getElementById('pem-num'))?.focus(); },120);
+}
+
+function closeProfileEdit(){ document.getElementById('profile-edit-modal').classList.remove('open'); }
+
+function saveProfileField(){
+  const key=editingProfileField, cfg=PROFILE_CONFIGS[key];
+  if(cfg.type==='fraction'){
+    const num=document.getElementById('pem-num')?.value;
+    const den=document.getElementById('pem-den')?.value;
+    if(num) profileData[key]=num;
+    if(key==='curyear'   && den) profileData.years=den;
+    if(key==='semsperyr' && den) profileData.semsTotal=den;
+  } else {
+    const val=document.getElementById('pem-val')?.value?.trim();
+    if(val!==undefined) profileData[key]=val;
+  }
+  saveProfileData(); closeProfileEdit(); renderProfile();
+}
+
+document.getElementById('profile-edit-modal').addEventListener('click',function(e){ if(e.target===this) closeProfileEdit(); });
+
+
+// SIGN UP
+function openSignupModal(){ document.getElementById('signup-modal').classList.add('open'); }
+function closeSignupModal(){ document.getElementById('signup-modal').classList.remove('open'); }
+function handleSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const pass=document.getElementById('su-password').value;
+  if(!name||!email||!pass){ alert('Please fill in all fields'); return; }
+  if(pass.length<8){ alert('Password must be at least 8 characters'); return; }
+  closeSignupModal();
+  if(!profileData.name){ profileData.name=name; saveProfileData(); renderProfile(); }
+}
+
+// LANDING -> APP
+function goApp(isSignup){
+  document.getElementById('landing-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  document.body.style.overflow='';
+  renderAll(); renderProfile();
+  if(isSignup) setTimeout(openWalkthrough, 400);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM('signup');closeM('login');}});
+
+// WALKTHROUGH
+const WT_STEPS = [
+  {
+    icon: '🎓',
+    num: 'Welcome to StudyOS',
+    title: 'Your semester, organized.',
+    desc: 'StudyOS helps you track courses, assignments, and study sessions in one place. Let\'s take a quick tour to get you started.',
+    tip: '💡 All your data is saved locally on your device.'
+  },
+  {
+    icon: '📚',
+    num: 'Step 1 of 4',
+    title: 'Tap "Courses" in the bottom nav',
+    desc: 'The Courses page is where you manage everything. From here you can add, edit, and view all your courses.',
+    tip: '📍 Look for the 📚 icon in the bottom navigation bar.'
+  },
+  {
+    icon: '➕',
+    num: 'Step 2 of 4',
+    title: 'Tap the + button to add a course',
+    desc: 'Hit the big + button in the center of the bottom bar to open the Add Course form.',
+    tip: '✏️ You can add the course name, weekly hours, goal grade, and exam dates.'
+  },
+  {
+    icon: '📅',
+    num: 'Step 3 of 4',
+    title: 'Add exam and assignment dates',
+    desc: 'Inside the course form, tap "+ Add Date" to add your exam date, assignments, or any other important date.',
+    tip: '🔔 Dates will show as countdown badges on your home screen.'
+  },
+  {
+    icon: '🏠',
+    num: 'Step 4 of 4',
+    title: 'Check your Home dashboard',
+    desc: 'After adding courses, your Home page shows a full semester overview — progress bars, exam countdowns, and pending tasks.',
+    tip: '🎯 Tap any course card to see full details and manage assignments.'
+  }
+];
+
+let wtCurrent = 0;
+
+function openWalkthrough() {
+  wtCurrent = 0;
+  buildWalkthrough();
+  document.getElementById('walkthrough-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderWtStep();
+}
+
+function closeWalkthrough() {
+  document.getElementById('walkthrough-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function buildWalkthrough() {
+  const stepsEl = document.getElementById('wt-steps');
+  const dotsEl = document.getElementById('wt-dots');
+  stepsEl.innerHTML = WT_STEPS.map((s, i) => `
+    <div class="wt-step ${i===0?'active':''}" id="wt-step-${i}">
+      <div class="wt-step-icon">${s.icon}</div>
+      <div class="wt-step-num">${s.num}</div>
+      <div class="wt-step-title">${s.title}</div>
+      <div class="wt-step-desc">${s.desc}</div>
+      ${s.tip ? `<div class="wt-step-tip">${s.tip}</div>` : ''}
+    </div>`).join('');
+  dotsEl.innerHTML = WT_STEPS.map((_,i) => `<div class="wt-dot ${i===0?'active':''}" id="wt-dot-${i}"></div>`).join('');
+}
+
+function renderWtStep() {
+  const total = WT_STEPS.length;
+  // Steps
+  document.querySelectorAll('.wt-step').forEach((el,i) => el.classList.toggle('active', i===wtCurrent));
+  // Dots
+  document.querySelectorAll('.wt-dot').forEach((el,i) => el.classList.toggle('active', i===wtCurrent));
+  // Progress
+  document.getElementById('wt-progress-fill').style.width = ((wtCurrent+1)/total*100)+'%';
+  // Buttons
+  const prev = document.getElementById('wt-prev');
+  const next = document.getElementById('wt-next');
+  prev.style.display = wtCurrent === 0 ? 'none' : 'block';
+  if (wtCurrent === total-1) {
+    next.textContent = "Let's go! 🚀";
+    next.classList.add('finish');
+  } else {
+    next.textContent = 'Next →';
+    next.classList.remove('finish');
+  }
+}
+
+function wtNext() {
+  if (wtCurrent < WT_STEPS.length-1) {
+    wtCurrent++;
+    renderWtStep();
+  } else {
+    closeWalkthrough();
+    goTab('courses', null, 'ni-courses');
+  }
+}
+
+function wtPrev() {
+  if (wtCurrent > 0) { wtCurrent--; renderWtStep(); }
+}
+
+
+// SORT DASHBOARD
+function setDashSort(asc){
+  dashSortAsc=asc;
+  var a=document.getElementById('sort-arrow');
+  var l=document.getElementById('sort-label');
+  if(a) a.style.transform=asc?'rotate(0deg)':'rotate(180deg)';
+  if(l) l.textContent=asc?'Soonest':'Latest';
+  renderDash();
+}
+
+// GRADE CALCULATOR
+function updateSliderColor(slider){
+  const v = slider.value;
+  const col = v >= 60 ? '#16a34a' : '#dc2626';
+  slider.style.accentColor = col;
+  const el = document.getElementById('gc-exam-val');
+  if(el){ el.textContent = v; el.style.color = col; }
+}
+function calcGrade(){
+  const cur   = parseFloat(document.getElementById('gc-current')?.value);
+  const exam  = parseFloat(document.getElementById('gc-exam')?.value);
+  const examW = parseFloat(document.getElementById('gc-exam-w')?.value);
+  const asgn  = parseFloat(document.getElementById('gc-assign')?.value);
+  const asgnW = parseFloat(document.getElementById('gc-assign-w')?.value);
+
+  const res = document.getElementById('gc-result');
+  if(!res) return;
+  if(isNaN(cur)) { res.style.display='none'; return; }
+
+  let totalW = 0;
+  if(!isNaN(exam) && !isNaN(examW))  totalW += examW;
+  if(!isNaN(asgn) && !isNaN(asgnW))  totalW += asgnW;
+  if(totalW === 0) { res.style.display='none'; return; }
+
+  const remainW = Math.max(0, 100 - totalW);
+  let score = cur * (remainW / 100);
+  if(!isNaN(exam) && !isNaN(examW))  score += exam  * (examW  / 100);
+  if(!isNaN(asgn) && !isNaN(asgnW))  score += asgn  * (asgnW  / 100);
+  score = Math.min(100, Math.max(0, Math.round(score * 10) / 10));
+
+  const letter = score>=90?'A':score>=80?'B':score>=70?'C':score>=60?'D':'F';
+  const col    = score>=80?'#2563eb':score>=70?'#16a34a':score>=60?'#d97706':'#dc2626';
+  const bg     = score>=80?'#eff4ff':score>=70?'#f0fdf4':score>=60?'#fffbeb':'#fef2f2';
+  const border = score>=80?'#c7d9fc':score>=70?'#bbf7d0':score>=60?'#fde68a':'#fecaca';
+
+  document.getElementById('gc-score').textContent = score.toFixed(1);
+  document.getElementById('gc-score').style.color = col;
+  document.getElementById('gc-letter').textContent = 'Grade  ' + letter;
+  document.getElementById('gc-letter').style.color = col;
+  document.getElementById('gc-bar').style.width = score + '%';
+  document.getElementById('gc-bar').style.background = col;
+  document.getElementById('gc-bar-label').textContent = score.toFixed(1) + ' / 100';
+  document.getElementById('gc-bar-label').style.color = col;
+  res.style.background = bg;
+  res.style.border = '1px solid ' + border;
+  res.style.display = 'block';
+}
+
+// INIT
+// Wire up all modal-triggering buttons via addEventListener (not inline onclick)
+(function() {
+  function wireBtn(id, fn) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', fn);
+  }
+  // App header signup btn
+  wireBtn('app-signup-btn', function() { openM('signup'); });
+  wireBtn('btn-create-account', function() { closeM('signup'); goApp(true); });
+  wireBtn('btn-login', function() { closeM('login'); goApp(false); });
+  // Walkthrough close
+  var wtSkip = document.querySelector('.wt-skip');
+  if (wtSkip) wtSkip.addEventListener('click', closeWalkthrough);
+})();
+updatePomoDisplay();
+renderAll();
+renderProfile();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+functionsDirectory = "C:\\Users\\Shoval\\studyos-netlify\\netlify\\functions"
+functionsDirectoryOrigin = "config-v1"
+redirectsOrigin = "config"
+plugins = []
+headers = []
+
+[build]
+publish = "C:\\Users\\Shoval\\studyos-netlify\\public"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "node inject.js"
+functions = "C:\\Users\\Shoval\\studyos-netlify\\netlify\\functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[redirects]]
+from = "/api/storage"
+to = "/.netlify/functions/storage"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

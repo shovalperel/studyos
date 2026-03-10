@@ -1,0 +1,9 @@
+{
+  "name": "studyos-netlify",
+  "version": "1.0.0",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@octokit/rest": "^22.0.1",
+    "chokidar": "^3.6.0"
+  }
+}
