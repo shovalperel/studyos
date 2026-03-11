@@ -1476,7 +1476,7 @@ function tickClock(){
 setInterval(tickClock,1000); tickClock();
 
 // TABS
-const PAGE_TITLES = {dash:'Dashboard',courses:'My Courses',timer:'Focus Timer',cal:'Calendar',profile:'Profile',grade:'Predicted Grade'};
+const PAGE_TITLES = {dash:'Dashboard',courses:'My Courses',timer:'Focus Timer',cal:'Calendar',planner:'Study Planner',profile:'Profile',grade:'Predicted Grade'};
 function goTab(page, tabEl, navId){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
