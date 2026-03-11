@@ -1425,6 +1425,7 @@ document.addEventListener('click', function(e) {
 const _store = {};
 function safeGet(key, def){ try{ const v=localStorage.getItem(key); return v!==null?v:def; }catch(e){ return _store[key]!==undefined?_store[key]:def; } }
 function safeSet(key, val){ try{ localStorage.setItem(key,val); }catch(e){ _store[key]=val; } }
+function safeJSON(key, def){ try{ const v=safeGet(key,null); return v!==null ? JSON.parse(v) : def; }catch(e){ return def; } }
 
 
 
