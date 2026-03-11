@@ -2759,9 +2759,10 @@ function genReward(assign, dur) {
 }
 
 function runOptimizer() {
+  try {
   const energy   = parseInt(document.getElementById('sp-energy').value) || 6;
   const availMin = parseInt(document.getElementById('sp-time').value) || 60;
-  const location = _selectedLocation;
+  const loc      = _selectedLocation;
   const today    = new Date(); today.setHours(0,0,0,0);
 
   const pending = assigns.filter(a => !a.done);
@@ -2778,10 +2779,20 @@ function runOptimizer() {
   }
 
   // Score every pending task
-  const scored = pending
-    .map(a => ({ assign: a, score: scoreTask(a, energy, location, availMin, today) }))
+  let scored = pending
+    .map(a => ({ assign: a, score: scoreTask(a, energy, loc, availMin, today) }))
     .filter(x => x.score >= 0)
     .sort((a,b) => b.score - a.score);
+
+  // If nothing fits, relax time constraint and score again (still pick best match)
+  let timeRelaxed = false;
+  if (!scored.length) {
+    timeRelaxed = true;
+    scored = pending
+      .map(a => ({ assign: a, score: scoreTask(a, energy, loc, 99999, today) }))
+      .filter(x => x.score >= 0)
+      .sort((a,b) => b.score - a.score);
+  }
 
   if (!scored.length) {
     document.getElementById('optimizer-result').innerHTML = `
@@ -2800,11 +2811,11 @@ function runOptimizer() {
   const ci   = course ? courses.indexOf(course) : 0;
   const hex  = getCourseHex(ci);
   const emoji = getCourseEmoji(ci);
-  const why  = genWhy(best, energy, location);
+  const why  = genWhy(best, energy, loc);
   const micro = genMicroGoal(best);
   const reward = genReward(best, dur);
   const energyLabel = energy >= 8 ? '🔥 Deep Work' : energy >= 5 ? '📖 Active Review' : '🧩 Passive Maintenance';
-  const locLabel = location === 'home' ? '🏠 Home' : location === 'transit' ? '🚌 Transit' : '💼 Work';
+  const locLabel = loc === 'home' ? '🏠 Home' : loc === 'transit' ? '🚌 Transit' : '💼 Work';
 
   const dueText = best.due ? (() => {
     const d = Math.round((new Date(best.due) - today) / 86400000);
