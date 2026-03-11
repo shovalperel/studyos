@@ -1465,12 +1465,31 @@ function getCourseColor(i){ return COLORS[i % COLORS.length]; }
 function getCourseEmoji(i){ return EMOJIS[i % EMOJIS.length]; }
 function getCourseHex(i)  { return CCOLORS[i % CCOLORS.length]; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+let _toastTimer = null;
+function showSaved(){
+  const t = document.getElementById('saved-toast');
+  if(!t) return;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 1800);
+}
+
 function save(){
   safeSet('sos_courses', JSON.stringify(courses));
   safeSet('sos_assigns', JSON.stringify(assigns));
   safeSet('sos_log',     JSON.stringify(studyLog));
   safeSet('sos_pomo',    pomoCount);
+  showSaved();
 }
+
+function saveAll(){
+  save();
+  saveCalEvents();
+  saveProfileData();
+}
+
+window.addEventListener('beforeunload', saveAll);
+setInterval(saveAll, 30000); // auto-save every 30 seconds
 
 // CLOCK
 function tickClock(){
