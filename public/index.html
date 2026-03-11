@@ -1475,22 +1475,22 @@ function showSaved(){
   _toastTimer = setTimeout(()=>{ t.style.opacity='0'; }, 1600);
 }
 
-function save(){
+function save(silent){
   safeSet('sos_courses', JSON.stringify(courses));
   safeSet('sos_assigns', JSON.stringify(assigns));
   safeSet('sos_log',     JSON.stringify(studyLog));
   safeSet('sos_pomo',    pomoCount);
-  showSaved();
+  if(!silent) showSaved();
 }
 
 function saveAll(){
-  save();
-  saveCalEvents();
-  saveProfileData();
+  save(true);
+  safeSet('sos_cal_events', JSON.stringify(calEvents));
+  safeSet('sos_profile', JSON.stringify(profileData));
 }
 
 window.addEventListener('beforeunload', saveAll);
-setInterval(saveAll, 30000); // auto-save every 30 seconds
+setInterval(saveAll, 30000);
 
 // CLOCK
 function tickClock(){
