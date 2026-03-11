@@ -1470,9 +1470,9 @@ let _toastTimer = null;
 function showSaved(){
   const t = document.getElementById('saved-toast');
   if(!t) return;
-  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  t.style.opacity='1';
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, 1800);
+  _toastTimer = setTimeout(()=>{ t.style.opacity='0'; }, 1600);
 }
 
 function save(){
