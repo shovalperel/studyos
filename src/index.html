@@ -874,46 +874,90 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
 
 
   <!-- STUDY PLANNER PAGE -->
-  <div class="page" id="page-planner" style="background:#f4f6f9;min-height:calc(100vh - 65px);">
-    <div style="max-width:720px;margin:0 auto;padding:32px 16px 64px;display:flex;flex-direction:column;gap:16px;">
+  <div class="page" id="page-planner" style="background:#f0f4f9;min-height:calc(100vh - 65px);">
+  <div style="max-width:680px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:14px;">
 
-      <!-- Header card -->
-      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;border-top:6px solid var(--accent);padding:24px 24px 20px;">
-        <div style="font-size:22px;font-weight:700;color:#202124;margin-bottom:4px;">🧠 Study Planner</div>
-        <div style="font-size:13px;color:#5f6368;">Calculate how many hours you need to study for each course based on your availability and exam dates.</div>
-      </div>
-
-      <!-- Availability card -->
-      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
-        <div style="font-size:15px;font-weight:600;color:#202124;margin-bottom:16px;">Your Daily Availability</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div>
-            <label style="display:block;font-size:13px;color:#5f6368;margin-bottom:8px;font-weight:500;">Weekday Hours Available</label>
-            <input type="number" id="sp-wd-hours" value="4" min="0" max="24" step="0.5"
-              style="width:100%;border:none;border-bottom:2px solid #9aa0a6;border-radius:0;background:transparent;font-size:20px;font-weight:700;color:#202124;padding:4px 0 6px;outline:none;font-family:'DM Sans',sans-serif;box-sizing:border-box;transition:border-color .15s;"
-              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#9aa0a6'">
-            <div style="font-size:11px;color:#9aa0a6;margin-top:4px;">Mon – Fri</div>
-          </div>
-          <div>
-            <label style="display:block;font-size:13px;color:#5f6368;margin-bottom:8px;font-weight:500;">Weekend Hours Available</label>
-            <input type="number" id="sp-we-hours" value="8" min="0" max="24" step="0.5"
-              style="width:100%;border:none;border-bottom:2px solid #9aa0a6;border-radius:0;background:transparent;font-size:20px;font-weight:700;color:#202124;padding:4px 0 6px;outline:none;font-family:'DM Sans',sans-serif;box-sizing:border-box;transition:border-color .15s;"
-              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#9aa0a6'">
-            <div style="font-size:11px;color:#9aa0a6;margin-top:4px;">Sat &amp; Sun</div>
-          </div>
-        </div>
-        <div style="margin-top:20px;">
-          <button onclick="calcStudyPlan()"
-            style="background:var(--accent);color:white;border:none;border-radius:8px;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;box-shadow:0 2px 8px rgba(13,122,107,.25);"
-            onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">Calculate Study Plan</button>
-        </div>
-      </div>
-
-      <!-- Results section -->
-      <div id="planner-results" style="display:none;"></div>
-
+    <!-- Header -->
+    <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;border-top:6px solid var(--accent);padding:22px 24px 18px;">
+      <div style="font-size:21px;font-weight:800;color:#202124;margin-bottom:4px;">⚡ Dynamic Study Optimizer</div>
+      <div style="font-size:13px;color:#5f6368;line-height:1.5;">Tell me your current state and I'll pick the perfect task from your backlog — no decision paralysis.</div>
     </div>
+
+    <!-- Energy Level -->
+    <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+      <div style="font-size:14px;font-weight:700;color:#202124;margin-bottom:4px;">Current Energy Level</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:16px;">How focused and sharp do you feel right now?</div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:22px;" id="sp-energy-emoji">😐</span>
+        <div style="flex:1;">
+          <input type="range" id="sp-energy" min="1" max="10" value="6"
+            oninput="updateEnergyDisplay(this.value)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#9aa0a6;font-weight:600;margin-top:4px;">
+            <span>1 — Drained</span><span>5 — Medium</span><span>10 — Peak</span>
+          </div>
+        </div>
+        <div style="min-width:52px;text-align:center;">
+          <div id="sp-energy-val" style="font-size:26px;font-weight:900;color:var(--accent);line-height:1;">6</div>
+          <div id="sp-energy-label" style="font-size:10px;font-weight:700;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;">Medium</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Time -->
+    <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+      <div style="font-size:14px;font-weight:700;color:#202124;margin-bottom:4px;">Available Time</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">How many minutes do you have right now?</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="number" id="sp-time" value="60" min="5" max="480" step="5"
+          style="width:110px;border:none;border-bottom:2px solid #9aa0a6;border-radius:0;background:transparent;font-size:28px;font-weight:900;color:#202124;padding:4px 0 6px;outline:none;font-family:'DM Sans',sans-serif;text-align:center;transition:border-color .15s;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#9aa0a6'">
+        <span style="font-size:15px;font-weight:600;color:#8899aa;">minutes</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+        <button onclick="document.getElementById('sp-time').value=15" style="padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#f4f6f9;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#5f6368;cursor:pointer;">15 min</button>
+        <button onclick="document.getElementById('sp-time').value=30" style="padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#f4f6f9;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#5f6368;cursor:pointer;">30 min</button>
+        <button onclick="document.getElementById('sp-time').value=60" style="padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#f4f6f9;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#5f6368;cursor:pointer;">1 hour</button>
+        <button onclick="document.getElementById('sp-time').value=90" style="padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#f4f6f9;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#5f6368;cursor:pointer;">90 min</button>
+        <button onclick="document.getElementById('sp-time').value=120" style="padding:5px 12px;border-radius:16px;border:1px solid #e0e0e0;background:#f4f6f9;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#5f6368;cursor:pointer;">2 hours</button>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+      <div style="font-size:14px;font-weight:700;color:#202124;margin-bottom:4px;">Current Location</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">Where are you studying?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div id="sp-loc-home" onclick="selectLocation('home')" style="border:2px solid var(--accent);background:#e8f5f3;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:4px;">🏠</div>
+          <div style="font-size:13px;font-weight:700;color:#202124;">Home</div>
+          <div style="font-size:10px;color:#8899aa;margin-top:2px;">Full focus</div>
+        </div>
+        <div id="sp-loc-transit" onclick="selectLocation('transit')" style="border:2px solid #e0e0e0;background:white;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:4px;">🚌</div>
+          <div style="font-size:13px;font-weight:700;color:#202124;">Transit</div>
+          <div style="font-size:10px;color:#8899aa;margin-top:2px;">Mobile-friendly</div>
+        </div>
+        <div id="sp-loc-work" onclick="selectLocation('work')" style="border:2px solid #e0e0e0;background:white;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:4px;">💼</div>
+          <div style="font-size:13px;font-weight:700;color:#202124;">Work</div>
+          <div style="font-size:10px;color:#8899aa;margin-top:2px;">Quick tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <button onclick="runOptimizer()"
+      style="background:var(--accent);color:white;border:none;border-radius:10px;padding:15px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;box-shadow:0 4px 16px rgba(13,122,107,.3);letter-spacing:-.2px;"
+      onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">
+      ⚡ Find My Perfect Task
+    </button>
+
+    <!-- Result -->
+    <div id="optimizer-result" style="display:none;"></div>
+
   </div>
+</div>
 
   <!-- PROFILE PAGE -->
   <div class="page" id="page-profile">
