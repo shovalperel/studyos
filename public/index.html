@@ -930,17 +930,17 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
       <div style="font-size:14px;font-weight:700;color:#202124;margin-bottom:4px;">Current Location</div>
       <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">Where are you studying?</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-        <button type="button" id="sp-loc-home" onclick="selectLocation('home')" style="border:2px solid var(--accent);background:#e8f5f3;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;font-family:'DM Sans',sans-serif;width:100%;">
+        <button type="button" id="sp-loc-home" class="sp-loc-btn selected" onclick="selectLocation('home')">
           <div style="font-size:24px;margin-bottom:4px;">🏠</div>
           <div style="font-size:13px;font-weight:700;color:#202124;">Home</div>
           <div style="font-size:10px;color:#8899aa;margin-top:2px;">Full focus</div>
         </button>
-        <button type="button" id="sp-loc-transit" onclick="selectLocation('transit')" style="border:2px solid #e0e0e0;background:white;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;font-family:'DM Sans',sans-serif;width:100%;">
+        <button type="button" id="sp-loc-transit" class="sp-loc-btn" onclick="selectLocation('transit')">
           <div style="font-size:24px;margin-bottom:4px;">🚌</div>
           <div style="font-size:13px;font-weight:700;color:#202124;">Transit</div>
           <div style="font-size:10px;color:#8899aa;margin-top:2px;">Mobile-friendly</div>
         </button>
-        <button type="button" id="sp-loc-work" onclick="selectLocation('work')" style="border:2px solid #e0e0e0;background:white;border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;font-family:'DM Sans',sans-serif;width:100%;">
+        <button type="button" id="sp-loc-work" class="sp-loc-btn" onclick="selectLocation('work')">
           <div style="font-size:24px;margin-bottom:4px;">💼</div>
           <div style="font-size:13px;font-weight:700;color:#202124;">Work</div>
           <div style="font-size:10px;color:#8899aa;margin-top:2px;">Quick tasks</div>
