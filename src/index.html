@@ -1496,7 +1496,7 @@ setInterval(saveAll, 30000); // auto-save every 30 seconds
 function tickClock(){
   const n=new Date(), h=n.getHours(), m=n.getMinutes().toString().padStart(2,'0');
   const h12=(h%12||12), ampm=h>=12?'PM':'AM';
-  document.getElementById('greeting').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const gr=document.getElementById('greeting'); if(gr) gr.textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   document.getElementById('tdate').textContent = `${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
   const ct=document.getElementById('cc-time'); if(ct) ct.textContent=`${h12}:${m} ${ampm}`;
   const cd=document.getElementById('cc-day');  if(cd) cd.textContent=DAYS[n.getDay()];
