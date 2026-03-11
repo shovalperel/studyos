@@ -1973,7 +1973,7 @@ function updateDrawerActive(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
 
 // ── CALENDAR ──
-let calEvents = JSON.parse(safeGet('sos_cal_events', '[]') || '[]');
+let calEvents = safeJSON('sos_cal_events', []);
 let calViewDate = new Date();
 let calView = 'week';
 let editingEvId = null;
