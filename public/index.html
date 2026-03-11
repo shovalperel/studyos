@@ -1159,51 +1159,46 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
     <button onclick="closeCourseModal()" style="background:none;border:none;cursor:pointer;padding:8px 12px 8px 0;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;transition:opacity .15s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">← Back</button>
     <span id="cm-title" style="font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.4px;">Add Course</span>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:24px 32px 48px;">
-    <div style="display:grid;grid-template-columns:1fr;gap:16px;">
-
-      <div>
-        <label style="display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Course Name *</label>
-        <input id="cm-name" placeholder="e.g. Data Structures" style="width:100%;font-size:15px;padding:11px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s;box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+  <div style="flex:1;overflow-y:auto;padding:24px 20px 48px;">
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Course Name *</label>
+        <input id="cm-name" placeholder="e.g. Data Structures">
       </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div>
-          <label style="display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Weekly Hours</label>
-          <input type="number" id="cm-lhours" placeholder="e.g. 3" min="1" max="40" style="width:100%;font-size:15px;padding:11px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s;box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-        </div>
-        <div>
-          <label style="display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Target Study Hours</label>
-          <input type="number" id="cm-target" placeholder="e.g. 20" min="1" style="width:100%;font-size:15px;padding:11px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s;box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-        </div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Weekly Hours</label>
+        <input type="number" id="cm-lhours" placeholder="e.g. 3" min="1" max="40">
       </div>
-
-      <div>
-        <label style="display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Goal Grade (%)</label>
-        <input type="number" id="cm-grade" placeholder="e.g. 90" min="0" max="100" style="width:100%;font-size:15px;padding:11px 14px;border-radius:12px;border:2px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .15s;box-sizing:border-box;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <div class="form-col">
+        <label class="fl">Target Study Hours</label>
+        <input type="number" id="cm-target" placeholder="e.g. 20" min="1">
       </div>
-
-      <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <label style="font-size:13px;font-weight:700;color:var(--text);">Exam / Assignment Dates</label>
-          <button type="button" class="add-date-btn" onclick="addDateEntry()">+ Add Date</button>
-        </div>
-        <div id="cm-dates-list"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-col">
+        <label class="fl">Goal Grade (%)</label>
+        <input type="number" id="cm-grade" placeholder="e.g. 90" min="0" max="100">
       </div>
-
-      <div style="background:var(--surface);border-radius:14px;padding:18px;border:1px solid var(--border);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <label style="font-size:13px;font-weight:700;color:var(--text);">Resources</label>
-          <button type="button" class="add-date-btn" onclick="addResourceEntry()">+ Add</button>
-        </div>
-        <div id="cm-resources-list"></div>
+    </div>
+    <div class="dates-section">
+      <div class="dates-header">
+        <label class="fl" style="margin:0">Exam / Assignment Dates</label>
+        <button type="button" class="add-date-btn" onclick="addDateEntry()">+ Add Date</button>
       </div>
-
-      <div class="cm-actions">
-        <button class="cm-btn-cancel" onclick="closeCourseModal()">Cancel</button>
-        <button class="cm-btn-save" onclick="saveCourse()">Save Course</button>
+      <div id="cm-dates-list"></div>
+    </div>
+    <div class="dates-section">
+      <div class="dates-header">
+        <label class="fl" style="margin:0">Resources</label>
+        <button type="button" class="add-date-btn" onclick="addResourceEntry()">+ Add</button>
       </div>
-
+      <div id="cm-resources-list"></div>
+    </div>
+    <div class="cm-actions">
+      <button class="cm-btn-cancel" onclick="closeCourseModal()">Cancel</button>
+      <button class="cm-btn-save" onclick="saveCourse()">Save Course</button>
     </div>
   </div>
 </div>
