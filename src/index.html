@@ -3129,11 +3129,15 @@ function renderPlannerResults(results, todayHours) {
 }
 
 function renderPlanner() {
-  const saved = JSON.parse(safeGet('sos_study_plan', 'null') || 'null');
+  const saved = safeJSON('sos_study_plan', null);
   if (saved) {
-    document.getElementById('sp-wd-hours').value = saved.wdH || 4;
-    document.getElementById('sp-we-hours').value = saved.weH || 8;
-    calcStudyPlan();
+    if (saved.energy && document.getElementById('sp-energy')) {
+      document.getElementById('sp-energy').value = saved.energy;
+      updateEnergyDisplay(saved.energy);
+    }
+    if (saved.time && document.getElementById('sp-time'))
+      document.getElementById('sp-time').value = saved.time;
+    if (saved.location) selectLocation(saved.location);
   }
 }
 
