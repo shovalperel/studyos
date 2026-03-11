@@ -2646,13 +2646,8 @@ function selectLocation(loc) {
   ['home','transit','work'].forEach(l => {
     const el = document.getElementById('sp-loc-'+l);
     if (!el) return;
-    if (l === loc) {
-      el.style.border = '2px solid var(--accent)';
-      el.style.background = '#e8f5f3';
-    } else {
-      el.style.border = '2px solid #e0e0e0';
-      el.style.background = 'white';
-    }
+    if (l === loc) el.classList.add('selected');
+    else el.classList.remove('selected');
   });
 }
 
