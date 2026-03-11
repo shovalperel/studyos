@@ -2343,7 +2343,7 @@ const PROFILE_CONFIGS = {
   cursem:    {title:'Current Semester',  label:'Current / Total (e.g. 3 / 8)', type:'fraction', numPlaceholder:'Cur',    denKey:'semsTotalComputed'},
 };
 
-function saveProfileData(){ safeSet('sos_profile', JSON.stringify(profileData)); }
+function saveProfileData(){ safeSet('sos_profile', JSON.stringify(profileData)); showSaved(); }
 
 function getTotalSems(){
   const y = parseInt(profileData.years||0);
