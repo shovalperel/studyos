@@ -2332,7 +2332,7 @@ function closeCourseDetail(){
 document.getElementById('course-detail-modal').addEventListener('click', function(e){ if(e.target===this) closeCourseDetail(); });
 
 // PROFILE
-let profileData = JSON.parse(safeGet('sos_profile', JSON.stringify({name:'Shoval',degree:'Computer Science',years:'3',curyear:'2',semsperyr:'3',cursem:'2'})));
+let profileData = safeJSON('sos_profile', {name:'Shoval',degree:'Computer Science',years:'3',curyear:'2',semsperyr:'3',cursem:'2'});
 let editingProfileField = null;
 
 const PROFILE_CONFIGS = {
