@@ -2841,6 +2841,7 @@ function runOptimizer() {
   document.getElementById('optimizer-result').innerHTML = `
     <div style="background:linear-gradient(135deg,#0d7a6b 0%,#0a5c50 100%);border-radius:12px;padding:22px 24px;color:white;margin-bottom:12px;">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-bottom:10px;">⚡ Optimal Task Selected</div>
+      ${timeRelaxed ? `<div style="font-size:11px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.15);margin-bottom:10px;">⏱️ No tasks fit ${availMin}min — showing best match (${dur}min). Consider more time.</div>` : ''}
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
         <div>
           <div style="font-size:20px;font-weight:900;line-height:1.2;margin-bottom:6px;">${emoji} ${esc(best.title)}</div>
