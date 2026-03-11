@@ -2597,45 +2597,74 @@ function calcStudyPlan() {
   const wdH = parseFloat(document.getElementById('sp-wd-hours').value) || 4;
   const weH = parseFloat(document.getElementById('sp-we-hours').value) || 8;
   const today = new Date(); today.setHours(0,0,0,0);
-
-  // Save inputs
   safeSet('sos_study_plan', JSON.stringify({ wdH, weH }));
+
+  const todayHours = (today.getDay()===0||today.getDay()===6) ? weH : wdH;
 
   const results = courses.map(course => {
     const examDate = course.exam ? new Date(course.exam) : null;
+    if (examDate) examDate.setHours(0,0,0,0);
     const daysLeft = examDate ? Math.max(0, Math.round((examDate - today) / 86400000)) : null;
 
-    // Complexity multiplier based on target grade
+    // Grade-based complexity
     const grade = parseFloat(course.grade) || 75;
-    const complexityMult = grade >= 90 ? 1.5 : grade >= 75 ? 1.1 : 0.9;
+    const gradeMult = grade >= 90 ? 1.5 : grade >= 80 ? 1.25 : grade >= 70 ? 1.0 : 0.85;
 
-    // Base target hours
+    // Assignment pressure: pending high-priority + overdue assignments add load
+    const courseAssigns = assigns.filter(a => a.courseId == course.id);
+    const pending = courseAssigns.filter(a => !a.done);
+    const overdue = pending.filter(a => a.due && new Date(a.due) < today);
+    const upcoming = pending.filter(a => a.due && new Date(a.due) >= today)
+      .sort((a,b) => new Date(a.due)-new Date(b.due));
+    const highPrio = pending.filter(a => a.priority==='high').length;
+    const assignMult = 1 + (highPrio * 0.08) + (overdue.length * 0.05);
+
     const targetHours = parseFloat(course.target) || 20;
-    const estimatedTotal = Math.round(targetHours * complexityMult);
+    const estimatedTotal = Math.round(targetHours * gradeMult * assignMult);
 
-    // Already studied — studyLog stores total minutes as a number
-    const logMins = studyLog[course.id] || 0;
+    // Real studied hours from timer log
+    const logMins = studyLog[course.id] || studyLog[String(course.id)] || 0;
     const studiedHours = Math.round((logMins / 60) * 10) / 10;
+    const studyPct = estimatedTotal > 0 ? Math.min(100, Math.round(studiedHours/estimatedTotal*100)) : 0;
 
     const remaining = Math.max(0, estimatedTotal - studiedHours);
 
-    // Available hours from today to exam
+    // Count available hours day-by-day until exam
     let availableHours = 0;
     let dailyGoal = null;
     let efficiencyPct = null;
     if (daysLeft !== null && daysLeft > 0) {
       for (let i = 0; i < daysLeft; i++) {
-        const d = new Date(today); d.setDate(d.getDate() + i);
-        availableHours += (d.getDay() === 0 || d.getDay() === 6) ? weH : wdH;
+        const d = new Date(today); d.setDate(d.getDate()+i);
+        availableHours += (d.getDay()===0||d.getDay()===6) ? weH : wdH;
       }
-      dailyGoal = daysLeft > 0 ? Math.round((remaining / daysLeft) * 10) / 10 : 0;
-      efficiencyPct = remaining > 0 ? Math.min(100, Math.round((availableHours / remaining) * 100)) : 100;
+      dailyGoal = Math.round((remaining/daysLeft)*10)/10;
+      efficiencyPct = remaining > 0 ? Math.min(150, Math.round((availableHours/remaining)*100)) : 100;
     }
 
-    return { course, examDate, daysLeft, estimatedTotal, studiedHours, remaining, availableHours, dailyGoal, efficiencyPct };
+    // Urgency score — drives sort order
+    let urgency = 0;
+    if (daysLeft !== null) {
+      if (daysLeft === 0) urgency = 10000;
+      else if (remaining > 0) urgency = (remaining / Math.max(daysLeft,1)) * 100;
+    }
+    urgency += overdue.length * 20;
+    if (upcoming.length && upcoming[0].due) {
+      const daysToNext = Math.round((new Date(upcoming[0].due)-today)/86400000);
+      if (daysToNext <= 2) urgency += 30;
+      else if (daysToNext <= 7) urgency += 10;
+    }
+    if (studyPct < 20 && daysLeft !== null && daysLeft < 14) urgency += 25;
+
+    return { course, examDate, daysLeft, estimatedTotal, studiedHours, studyPct,
+             remaining, availableHours, dailyGoal, efficiencyPct, urgency,
+             courseAssigns, pending, overdue, upcoming, highPrio };
   });
 
-  renderPlannerResults(results);
+  // Sort: highest urgency first
+  results.sort((a,b) => b.urgency - a.urgency);
+
+  renderPlannerResults(results, todayHours);
 }
 
 function renderPlannerResults(results) {
