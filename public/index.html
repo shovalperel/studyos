@@ -2889,6 +2889,14 @@ function runOptimizer() {
   `;
   document.getElementById('optimizer-result').style.display = 'block';
   document.getElementById('optimizer-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch(err) {
+    console.error('[Optimizer] Error:', err);
+    document.getElementById('optimizer-result').innerHTML = `
+      <div style="background:#fef2f2;border-radius:12px;border:1px solid #fca5a5;padding:20px 24px;text-align:center;color:#dc2626;font-size:13px;font-weight:600;">
+        Something went wrong. Check the browser console for details.
+      </div>`;
+    document.getElementById('optimizer-result').style.display = 'block';
+  }
 }
 
 function calcStudyPlan() {
