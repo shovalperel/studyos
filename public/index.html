@@ -2667,12 +2667,9 @@ function calcStudyPlan() {
   renderPlannerResults(results, todayHours);
 }
 
-function renderPlannerResults(results) {
+function renderPlannerResults(results, todayHours) {
   const container = document.getElementById('planner-results');
   if (!container) return;
-
-  const withExam = results.filter(r => r.examDate);
-  const noExam   = results.filter(r => !r.examDate);
 
   if (!results.length) {
     container.innerHTML = '<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:32px 24px;text-align:center;color:#9aa0a6;font-size:13px;">No courses found. Add courses first.</div>';
@@ -2680,85 +2677,162 @@ function renderPlannerResults(results) {
     return;
   }
 
+  const today = new Date(); today.setHours(0,0,0,0);
+  const withExam = results.filter(r => r.examDate);
+  const noExam   = results.filter(r => !r.examDate);
+
+  // ── Semester Health ──
+  const totalEstimated = results.reduce((s,r) => s + r.estimatedTotal, 0);
+  const totalStudied   = results.reduce((s,r) => s + r.studiedHours, 0);
+  const totalRemaining = results.reduce((s,r) => s + r.remaining, 0);
+  const onTrack  = withExam.filter(r => r.efficiencyPct !== null && r.efficiencyPct >= 80).length;
+  const atRisk   = withExam.filter(r => r.efficiencyPct !== null && r.efficiencyPct < 80).length;
+  const healthPct = totalEstimated > 0 ? Math.round(totalStudied/totalEstimated*100) : 0;
+  const healthColor = healthPct >= 60 ? '#16a34a' : healthPct >= 30 ? '#d97706' : '#dc2626';
+  const totalOverdue = results.reduce((s,r) => s + r.overdue.length, 0);
+  const totalPending = results.reduce((s,r) => s + r.pending.length, 0);
+
+  // ── Today's Focus ──
+  const focusResult = results.find(r => r.remaining > 0 && r.urgency > 0);
+
+  // ── Today's Budget ──
+  const urgentResults = withExam.filter(r => r.remaining > 0 && r.daysLeft > 0);
+  const totalUrgency = urgentResults.reduce((s,r) => s + r.urgency, 0);
+  const todayBudget = urgentResults.map(r => ({
+    course: r.course,
+    ci: courses.indexOf(r.course),
+    hours: totalUrgency > 0 ? Math.round((r.urgency/totalUrgency) * todayHours * 10) / 10 : 0
+  })).filter(b => b.hours > 0);
+
   let html = '';
 
+  // ── Semester Overview Card ──
+  html += `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+    <div style="font-size:14px;font-weight:700;color:#202124;margin-bottom:16px;">📊 Semester Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+      <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:${healthColor};">${healthPct}%</div>
+        <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Progress</div>
+      </div>
+      <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:#202124;">${Math.round(totalStudied)}h</div>
+        <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Studied</div>
+      </div>
+      <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:${atRisk>0?'#dc2626':'#16a34a'};">${onTrack}/${withExam.length}</div>
+        <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">On Track</div>
+      </div>
+      <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:800;color:${totalOverdue>0?'#dc2626':'#8899aa'};">${totalPending}</div>
+        <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Assignments</div>
+      </div>
+    </div>
+    <div style="margin-bottom:6px;display:flex;justify-content:space-between;font-size:11px;color:#8899aa;font-weight:500;">
+      <span>Overall study progress</span><span style="color:${healthColor};font-weight:700;">${healthPct}%</span>
+    </div>
+    <div style="height:8px;background:#f0f3f7;border-radius:6px;overflow:hidden;">
+      <div style="height:100%;width:${healthPct}%;background:${healthColor};border-radius:6px;"></div>
+    </div>
+    ${totalOverdue > 0 ? `<div style="margin-top:12px;padding:8px 12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:12px;font-weight:600;">⚠️ ${totalOverdue} overdue assignment${totalOverdue>1?'s':''} need attention</div>` : ''}
+  </div>`;
+
+  // ── Today's Focus Card ──
+  if (focusResult) {
+    const fci = courses.indexOf(focusResult.course);
+    html += `<div style="background:linear-gradient(135deg,#0d7a6b,#0a6359);border-radius:12px;padding:20px 24px;color:white;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-bottom:8px;">🎯 Today's Focus</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px;">${getCourseEmoji(fci)} ${esc(focusResult.course.name)}</div>
+      <div style="font-size:13px;opacity:.85;margin-bottom:12px;">${focusResult.daysLeft !== null ? focusResult.daysLeft+' days to exam · ' : ''}${focusResult.remaining}h remaining</div>
+      ${todayBudget.length ? `<div style="font-size:12px;opacity:.7;margin-bottom:8px;font-weight:600;">TODAY'S PLAN — ${todayHours}h available</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${todayBudget.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;">
+          <span style="font-size:13px;">${getCourseEmoji(b.ci)} ${esc(b.course.name)}</span>
+          <span style="font-size:13px;font-weight:800;">${b.hours}h</span>
+        </div>`).join('')}
+      </div>` : ''}
+    </div>`;
+  }
+
+  // ── Per-Course Cards ──
   if (withExam.length) {
     html += withExam.map(r => {
       const ci = courses.indexOf(r.course);
-      const emoji = getCourseEmoji(ci);
       const hex = getCourseHex(ci);
+      const effColor = r.efficiencyPct===null?'#8899aa':r.efficiencyPct>=80?'#16a34a':r.efficiencyPct>=50?'#d97706':'#dc2626';
+      const effBg    = r.efficiencyPct===null?'#f0f3f7':r.efficiencyPct>=80?'#f0fdf4':r.efficiencyPct>=50?'#fffbeb':'#fef2f2';
+      const examStr  = r.examDate ? r.examDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+      const daysStr  = r.daysLeft===null?'—':r.daysLeft===0?'Today!':r.daysLeft+'d left';
+      const barW     = r.efficiencyPct!==null ? Math.min(100,r.efficiencyPct) : 0;
+      const studyBarW = r.studyPct;
 
-      const effColor = r.efficiencyPct === null ? '#8899aa'
-        : r.efficiencyPct >= 80 ? '#16a34a'
-        : r.efficiencyPct >= 50 ? '#d97706'
-        : '#dc2626';
-      const effBg = r.efficiencyPct === null ? '#f0f3f7'
-        : r.efficiencyPct >= 80 ? '#f0fdf4'
-        : r.efficiencyPct >= 50 ? '#fffbeb'
-        : '#fef2f2';
+      // Upcoming assignments (next 3)
+      const assignHtml = r.upcoming.slice(0,3).map(a => {
+        const dueD = Math.round((new Date(a.due)-today)/86400000);
+        const dueColor = dueD<=1?'#dc2626':dueD<=3?'#d97706':'#5f6368';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f3f7;">
+          <span style="font-size:12px;color:#202124;">${esc(a.title)}</span>
+          <span style="font-size:11px;font-weight:600;color:${dueColor};">${dueD===0?'Today':dueD===1?'Tomorrow':'in '+dueD+'d'}</span>
+        </div>`;
+      }).join('');
 
-      const examDateStr = r.examDate
-        ? r.examDate.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})
-        : '—';
+      const overdueHtml = r.overdue.length ? `<div style="margin-top:10px;padding:8px 12px;background:#fef2f2;border-radius:8px;color:#dc2626;font-size:12px;font-weight:600;">🔴 ${r.overdue.length} overdue assignment${r.overdue.length>1?'s':''}</div>` : '';
 
-      const daysLabel = r.daysLeft === null ? '—'
-        : r.daysLeft === 0 ? 'Today!'
-        : r.daysLeft + ' days';
+      const statusMsg = r.efficiencyPct===null ? ''
+        : r.efficiencyPct>=100 ? `<div style="margin-top:10px;padding:8px 12px;background:#f0fdf4;border-radius:8px;color:#16a34a;font-size:12px;font-weight:600;">✓ On track — you have enough time!</div>`
+        : `<div style="margin-top:10px;padding:8px 12px;background:${effBg};border-radius:8px;color:${effColor};font-size:12px;font-weight:600;">⚠️ ${Math.round(Math.max(0,r.remaining-r.availableHours))}h short — consider adding ${r.dailyGoal}h/day</div>`;
 
-      const statusHtml = r.efficiencyPct === null
-        ? ''
-        : r.efficiencyPct >= 100
-          ? `<div style="margin-top:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;color:#16a34a;font-size:12px;font-weight:600;">✓ You have enough time to reach your goal!</div>`
-          : `<div style="margin-top:12px;padding:10px 14px;background:${r.efficiencyPct < 50 ? '#fef2f2' : '#fffbeb'};border-radius:8px;color:${r.efficiencyPct < 50 ? '#dc2626' : '#d97706'};font-size:12px;font-weight:600;">⚠️ You are ${Math.round(r.remaining - r.availableHours)}h short — consider reallocating time</div>`;
-
-      const barWidth = r.efficiencyPct !== null ? Math.min(100, r.efficiencyPct) : 0;
-
-      return `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <div style="font-size:16px;font-weight:700;color:#202124;">${emoji} ${esc(r.course.name)}</div>
-          <div style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${effBg};color:${effColor};">${r.efficiencyPct !== null ? r.efficiencyPct + '%' : '—'}</div>
-        </div>
-        <div style="font-size:12px;color:#5f6368;margin-bottom:16px;">Exam: ${examDateStr} · ${daysLabel} left</div>
-
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
-          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
-            <div style="font-size:18px;font-weight:800;color:${hex};">${r.estimatedTotal}h</div>
-            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Estimated</div>
-          </div>
-          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
-            <div style="font-size:18px;font-weight:800;color:#16a34a;">${r.studiedHours}h</div>
-            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Studied</div>
-          </div>
-          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
-            <div style="font-size:18px;font-weight:800;color:${r.remaining > 0 ? '#dc2626' : '#16a34a'};">${r.remaining}h</div>
-            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Remaining</div>
-          </div>
-          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
-            <div style="font-size:18px;font-weight:800;color:#0d7a6b;">${r.dailyGoal !== null ? r.dailyGoal + 'h' : '—'}</div>
-            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Daily Goal</div>
+      return `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div style="font-size:15px;font-weight:700;color:#202124;">${getCourseEmoji(ci)} ${esc(r.course.name)}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${r.daysLeft!==null&&r.daysLeft<=7?`<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:#fef2f2;color:#dc2626;">🔥 ${daysStr}</span>`:''}
+            <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:${effBg};color:${effColor};">${r.efficiencyPct!==null?r.efficiencyPct+'%':'—'}</span>
           </div>
         </div>
+        <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">Exam ${examStr}${r.daysLeft!==null&&r.daysLeft>7?' · '+daysStr:''} · Target ${r.course.grade||'—'}%</div>
 
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:500;color:#8899aa;margin-bottom:6px;">
-            <span>Efficiency</span>
-            <span style="color:${effColor};font-weight:700;">${r.efficiencyPct !== null ? r.efficiencyPct + '%' : '—'}</span>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+          <div style="background:#f4f6f9;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:16px;font-weight:800;color:${hex};">${r.estimatedTotal}h</div>
+            <div style="font-size:9px;font-weight:600;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;">Needed</div>
           </div>
-          <div style="height:8px;background:#f0f3f7;border-radius:6px;overflow:hidden;">
-            <div style="height:100%;width:${barWidth}%;background:${effColor};border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1);"></div>
+          <div style="background:#f4f6f9;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:16px;font-weight:800;color:#16a34a;">${r.studiedHours}h</div>
+            <div style="font-size:9px;font-weight:600;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;">Studied</div>
+          </div>
+          <div style="background:#f4f6f9;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:16px;font-weight:800;color:${r.remaining>0?'#dc2626':'#16a34a'};">${r.remaining}h</div>
+            <div style="font-size:9px;font-weight:600;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;">Left</div>
+          </div>
+          <div style="background:#f4f6f9;border-radius:8px;padding:10px;text-align:center;">
+            <div style="font-size:16px;font-weight:800;color:var(--accent);">${r.dailyGoal!==null?r.dailyGoal+'h':'—'}</div>
+            <div style="font-size:9px;font-weight:600;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;">Per Day</div>
           </div>
         </div>
-        ${statusHtml}
+
+        <div style="margin-bottom:4px;display:flex;justify-content:space-between;font-size:11px;color:#8899aa;font-weight:500;">
+          <span>Study progress</span><span style="color:${hex};font-weight:700;">${studyBarW}%</span>
+        </div>
+        <div style="height:6px;background:#f0f3f7;border-radius:6px;overflow:hidden;margin-bottom:12px;">
+          <div style="height:100%;width:${studyBarW}%;background:${hex};border-radius:6px;"></div>
+        </div>
+
+        ${assignHtml ? `<div style="margin-top:4px;"><div style="font-size:11px;font-weight:700;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Upcoming assignments</div>${assignHtml}</div>` : ''}
+        ${overdueHtml}
+        ${statusMsg}
       </div>`;
     }).join('');
   }
 
   if (noExam.length) {
     html += `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:16px 24px;">
-      <div style="font-size:13px;font-weight:600;color:#5f6368;margin-bottom:8px;">No exam date set</div>
+      <div style="font-size:12px;font-weight:600;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">No exam date set</div>
       ${noExam.map(r => {
         const ci = courses.indexOf(r.course);
-        return `<div style="font-size:13px;color:#8899aa;padding:4px 0;">${getCourseEmoji(ci)} ${esc(r.course.name)}</div>`;
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f3f7;">
+          <span style="font-size:13px;color:#202124;">${getCourseEmoji(ci)} ${esc(r.course.name)}</span>
+          <span style="font-size:12px;color:#8899aa;">${r.studiedHours}h studied</span>
+        </div>`;
       }).join('')}
     </div>`;
   }
