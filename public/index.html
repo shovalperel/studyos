@@ -1981,7 +1981,7 @@ let editingEvId = null;
 const WEEK_DAYS_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function saveCalEvents(){ safeSet('sos_cal_events', JSON.stringify(calEvents)); showSaved(); }
+function saveCalEvents(){ safeSet('sos_cal_events', JSON.stringify(calEvents)); showSaved(); } // user-triggered only
 
 function calNav(dir){
   if(calView==='week') calViewDate = new Date(calViewDate.getTime() + dir*7*86400000);
