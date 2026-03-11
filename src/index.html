@@ -873,6 +873,48 @@ body{font-family:'DM Sans',sans-serif;background:#080b12;color:#fff;overflow-x:h
   </div>
 
 
+  <!-- STUDY PLANNER PAGE -->
+  <div class="page" id="page-planner" style="background:#f4f6f9;min-height:calc(100vh - 65px);">
+    <div style="max-width:720px;margin:0 auto;padding:32px 16px 64px;display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Header card -->
+      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;border-top:6px solid var(--accent);padding:24px 24px 20px;">
+        <div style="font-size:22px;font-weight:700;color:#202124;margin-bottom:4px;">🧠 Study Planner</div>
+        <div style="font-size:13px;color:#5f6368;">Calculate how many hours you need to study for each course based on your availability and exam dates.</div>
+      </div>
+
+      <!-- Availability card -->
+      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;">
+        <div style="font-size:15px;font-weight:600;color:#202124;margin-bottom:16px;">Your Daily Availability</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <label style="display:block;font-size:13px;color:#5f6368;margin-bottom:8px;font-weight:500;">Weekday Hours Available</label>
+            <input type="number" id="sp-wd-hours" value="4" min="0" max="24" step="0.5"
+              style="width:100%;border:none;border-bottom:2px solid #9aa0a6;border-radius:0;background:transparent;font-size:20px;font-weight:700;color:#202124;padding:4px 0 6px;outline:none;font-family:'DM Sans',sans-serif;box-sizing:border-box;transition:border-color .15s;"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#9aa0a6'">
+            <div style="font-size:11px;color:#9aa0a6;margin-top:4px;">Mon – Fri</div>
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;color:#5f6368;margin-bottom:8px;font-weight:500;">Weekend Hours Available</label>
+            <input type="number" id="sp-we-hours" value="8" min="0" max="24" step="0.5"
+              style="width:100%;border:none;border-bottom:2px solid #9aa0a6;border-radius:0;background:transparent;font-size:20px;font-weight:700;color:#202124;padding:4px 0 6px;outline:none;font-family:'DM Sans',sans-serif;box-sizing:border-box;transition:border-color .15s;"
+              onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='#9aa0a6'">
+            <div style="font-size:11px;color:#9aa0a6;margin-top:4px;">Sat &amp; Sun</div>
+          </div>
+        </div>
+        <div style="margin-top:20px;">
+          <button onclick="calcStudyPlan()"
+            style="background:var(--accent);color:white;border:none;border-radius:8px;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;box-shadow:0 2px 8px rgba(13,122,107,.25);"
+            onmouseover="this.style.background='var(--accent-hover)'" onmouseout="this.style.background='var(--accent)'">Calculate Study Plan</button>
+        </div>
+      </div>
+
+      <!-- Results section -->
+      <div id="planner-results" style="display:none;"></div>
+
+    </div>
+  </div>
+
   <!-- PROFILE PAGE -->
   <div class="page" id="page-profile">
     <div class="sh"><h2>Profile</h2></div>
