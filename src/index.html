@@ -2763,9 +2763,19 @@ function renderPlanner() {
   if (wtSkip) wtSkip.addEventListener('click', closeWalkthrough);
 })();
 updatePomoDisplay();
-renderAll();
-renderProfile();
-saveAll(); // confirm all data is written on load
+
+// DEBUG: log what was loaded from localStorage on every page load
+console.log('[StudyOS] localStorage raw:', {
+  courses: localStorage.getItem('sos_courses'),
+  assigns: localStorage.getItem('sos_assigns'),
+  log:     localStorage.getItem('sos_log'),
+  cal:     localStorage.getItem('sos_cal_events'),
+});
+console.log('[StudyOS] Parsed state:', { courses, assigns, studyLog, calEvents });
+
+try { renderAll(); } catch(e) { console.error('[StudyOS] renderAll error:', e); }
+try { renderProfile(); } catch(e) { console.error('[StudyOS] renderProfile error:', e); }
+saveAll();
 
 </script>
 </body>
