@@ -2636,10 +2636,253 @@ function calcGrade(){
   res.style.display = 'block';
 }
 
-// STUDY PLANNER
+// STUDY PLANNER / DYNAMIC OPTIMIZER
+let _selectedLocation = 'home';
+
+function selectLocation(loc) {
+  _selectedLocation = loc;
+  ['home','transit','work'].forEach(l => {
+    const el = document.getElementById('sp-loc-'+l);
+    if (!el) return;
+    if (l === loc) {
+      el.style.border = '2px solid var(--accent)';
+      el.style.background = '#e8f5f3';
+    } else {
+      el.style.border = '2px solid #e0e0e0';
+      el.style.background = 'white';
+    }
+  });
+}
+
+function updateEnergyDisplay(val) {
+  const v = parseInt(val);
+  const emoji = v >= 8 ? '🔥' : v >= 5 ? '😊' : v >= 3 ? '😐' : '😴';
+  const label = v >= 8 ? 'Peak' : v >= 5 ? 'Medium' : 'Low';
+  const el = document.getElementById('sp-energy-val');
+  const em = document.getElementById('sp-energy-emoji');
+  const lb = document.getElementById('sp-energy-label');
+  if (el) el.textContent = v;
+  if (em) em.textContent = emoji;
+  if (lb) lb.textContent = label;
+}
+
+function getTaskEstDuration(assign) {
+  const base = { project:120, lab:90, essay:90, presentation:60, homework:60, quiz:30, other:45 };
+  const b = base[assign.type] || 45;
+  const w = parseFloat(assign.weight) || 10;
+  return Math.round(b * (w >= 30 ? 1.5 : w >= 15 ? 1.2 : 1.0));
+}
+
+function getTaskCategory(assign) {
+  if (['project','lab'].includes(assign.type)) return 'deep';
+  if (['homework'].includes(assign.type)) return 'deep';
+  if (['essay','presentation'].includes(assign.type)) return 'active';
+  return 'passive'; // quiz, other
+}
+
+function scoreTask(assign, energy, location, availMins, today) {
+  const dur = getTaskEstDuration(assign);
+  if (dur > availMins) return -1;
+
+  // Environment hard filters
+  if (location === 'transit' && ['project','lab'].includes(assign.type)) return -1;
+  if (location === 'work' && dur > 60) return -1;
+
+  const cat = getTaskCategory(assign);
+  let score = 0;
+
+  // Energy alignment
+  if (energy >= 8) {
+    score += cat === 'deep' ? 100 : cat === 'active' ? 50 : 20;
+  } else if (energy >= 5) {
+    score += cat === 'active' ? 100 : cat === 'deep' ? 60 : 40;
+  } else {
+    score += cat === 'passive' ? 100 : cat === 'active' ? 60 : 20;
+  }
+
+  // Transit bonus for light tasks
+  if (location === 'transit' && cat === 'passive') score += 30;
+  if (location === 'transit' && cat === 'active') score += 15;
+
+  // Urgency
+  if (assign.due) {
+    const d = Math.round((new Date(assign.due) - today) / 86400000);
+    score += d < 0 ? 200 : d === 0 ? 150 : d <= 2 ? 100 : d <= 7 ? 50 : 10;
+  }
+
+  // Priority
+  score += assign.priority === 'high' ? 50 : assign.priority === 'medium' ? 25 : 0;
+
+  return score;
+}
+
+function genWhy(assign, energy, location) {
+  const course = courses.find(c => c.id == assign.courseId);
+  const cn = course ? course.name : 'your course';
+  const cat = getTaskCategory(assign);
+  if (energy >= 8 && cat === 'deep')
+    return `Your peak energy (${energy}/10) is perfectly aligned with the deep focus "${assign.title}" demands — this is your ideal moment to tackle complex work.`;
+  if (energy >= 8 && cat !== 'deep')
+    return `Even though this is lighter work, your high energy (${energy}/10) means you'll fly through "${assign.title}" and still have mental capacity left.`;
+  if (energy >= 5 && location === 'transit')
+    return `Transit time is perfect for active review — "${assign.title}" is a mobile-friendly task that turns commute time into real ${cn} progress.`;
+  if (energy >= 5)
+    return `Medium energy (${energy}/10) is the sweet spot for "${assign.title}" — enough focus for solid progress without burning out your cognitive reserves.`;
+  if (location === 'work')
+    return `At work you need tasks you can stop and restart easily — "${assign.title}" is discrete, manageable, and won't lose context when interrupted.`;
+  return `Low energy (${energy}/10) is perfect for "${assign.title}" — staying in motion with lighter work keeps your momentum without mental exhaustion.`;
+}
+
+function genMicroGoal(assign) {
+  const goals = {
+    homework:     `Complete the first 3 problems or exercises in "${assign.title}"`,
+    project:      `Finish one specific feature or clearly defined milestone of "${assign.title}"`,
+    essay:        `Write the introduction paragraph and outline the main arguments for "${assign.title}"`,
+    lab:          `Complete the setup section and first experiment step of "${assign.title}"`,
+    quiz:         `Review all study material once and flag uncertain topics for "${assign.title}"`,
+    presentation: `Draft the first 3 slides and their key talking points for "${assign.title}"`,
+    other:        `Make one full section of meaningful, reviewable progress on "${assign.title}"`
+  };
+  return goals[assign.type] || goals.other;
+}
+
+function genReward(assign, dur) {
+  const weight = parseFloat(assign.weight) || 0;
+  const hrs = (dur / 60).toFixed(1);
+  if (assign.due) {
+    const d = Math.round((new Date(assign.due) - new Date()) / 86400000);
+    if (d <= 1) return `Completing this NOW eliminates your biggest source of deadline stress — future you will be grateful you acted today.`;
+    if (d <= 7) return `Finishing this ${hrs}h session means ${assign.title} is off your plate before the week ends — that's one less thing weighing on you.`;
+  }
+  if (weight >= 20) return `This is a ${weight}% grade component — every session now multiplies your exam-day confidence and reduces last-minute cramming.`;
+  return `A focused ${hrs}h session today removes this from your backlog entirely, giving you cleaner mental space for everything else this week.`;
+}
+
+function runOptimizer() {
+  const energy   = parseInt(document.getElementById('sp-energy').value) || 6;
+  const availMin = parseInt(document.getElementById('sp-time').value) || 60;
+  const location = _selectedLocation;
+  const today    = new Date(); today.setHours(0,0,0,0);
+
+  const pending = assigns.filter(a => !a.done);
+
+  if (!pending.length) {
+    document.getElementById('optimizer-result').innerHTML = `
+      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:32px 24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">🎉</div>
+        <div style="font-size:16px;font-weight:700;color:#202124;margin-bottom:8px;">Backlog is empty!</div>
+        <div style="font-size:13px;color:#5f6368;">All assignments are done. Add new ones in the Courses tab.</div>
+      </div>`;
+    document.getElementById('optimizer-result').style.display = 'block';
+    return;
+  }
+
+  // Score every pending task
+  const scored = pending
+    .map(a => ({ assign: a, score: scoreTask(a, energy, location, availMin, today) }))
+    .filter(x => x.score >= 0)
+    .sort((a,b) => b.score - a.score);
+
+  if (!scored.length) {
+    document.getElementById('optimizer-result').innerHTML = `
+      <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:32px 24px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">⏱️</div>
+        <div style="font-size:16px;font-weight:700;color:#202124;margin-bottom:8px;">No tasks fit your constraints</div>
+        <div style="font-size:13px;color:#5f6368;">Try increasing your available time or changing your location setting.</div>
+      </div>`;
+    document.getElementById('optimizer-result').style.display = 'block';
+    return;
+  }
+
+  const best = scored[0].assign;
+  const dur  = getTaskEstDuration(best);
+  const course = courses.find(c => c.id == best.courseId);
+  const ci   = course ? courses.indexOf(course) : 0;
+  const hex  = getCourseHex(ci);
+  const emoji = getCourseEmoji(ci);
+  const why  = genWhy(best, energy, location);
+  const micro = genMicroGoal(best);
+  const reward = genReward(best, dur);
+  const energyLabel = energy >= 8 ? '🔥 Deep Work' : energy >= 5 ? '📖 Active Review' : '🧩 Passive Maintenance';
+  const locLabel = location === 'home' ? '🏠 Home' : location === 'transit' ? '🚌 Transit' : '💼 Work';
+
+  const dueText = best.due ? (() => {
+    const d = Math.round((new Date(best.due) - today) / 86400000);
+    return d < 0 ? '🔴 Overdue' : d === 0 ? '🔴 Due today' : d === 1 ? '🟡 Due tomorrow' : `📅 Due in ${d}d`;
+  })() : '';
+
+  // Alternatives (next 2)
+  const altHtml = scored.slice(1,3).map(({assign:a}) => {
+    const ac = courses.find(c => c.id == a.courseId);
+    const aci = ac ? courses.indexOf(ac) : 0;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f3f7;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span>${getCourseEmoji(aci)}</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#202124;">${esc(a.title)}</div>
+          <div style="font-size:11px;color:#8899aa;">${ac?esc(ac.name):''} · ${getTaskEstDuration(a)}min</div>
+        </div>
+      </div>
+      <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;background:#f4f6f9;color:#5f6368;">${a.type}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('optimizer-result').innerHTML = `
+    <div style="background:linear-gradient(135deg,#0d7a6b 0%,#0a5c50 100%);border-radius:12px;padding:22px 24px;color:white;margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-bottom:10px;">⚡ Optimal Task Selected</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
+        <div>
+          <div style="font-size:20px;font-weight:900;line-height:1.2;margin-bottom:6px;">${emoji} ${esc(best.title)}</div>
+          <div style="font-size:13px;opacity:.8;">${course ? esc(course.name) : ''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:22px;font-weight:900;">${dur}min</div>
+          <div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.5px;">duration</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;background:rgba(255,255,255,.18);">${energyLabel}</span>
+        <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;background:rgba(255,255,255,.18);">${locLabel}</span>
+        ${dueText ? `<span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;background:rgba(255,255,255,.18);">${dueText}</span>` : ''}
+      </div>
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.7;margin-bottom:5px;">Why this task?</div>
+        <div style="font-size:13px;line-height:1.5;opacity:.95;">${why}</div>
+      </div>
+    </div>
+
+    <div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;margin-bottom:12px;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:16px;">🎯</span>
+            <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#8899aa;">Micro Goal</span>
+          </div>
+          <div style="font-size:14px;color:#202124;line-height:1.5;font-weight:500;">${micro}</div>
+        </div>
+        <div style="height:1px;background:#f0f3f7;"></div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:16px;">🏆</span>
+            <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#8899aa;">Reward Preview</span>
+          </div>
+          <div style="font-size:14px;color:#16a34a;line-height:1.5;font-weight:500;">${reward}</div>
+        </div>
+      </div>
+    </div>
+
+    ${altHtml ? `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:16px 24px;">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8899aa;margin-bottom:10px;">Alternative Options</div>
+      ${altHtml}
+    </div>` : ''}
+  `;
+  document.getElementById('optimizer-result').style.display = 'block';
+  document.getElementById('optimizer-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 function calcStudyPlan() {
-  const wdH = parseFloat(document.getElementById('sp-wd-hours').value) || 4;
-  const weH = parseFloat(document.getElementById('sp-we-hours').value) || 8;
+  const wdH = parseFloat(document.getElementById('sp-wd-hours') ? document.getElementById('sp-wd-hours').value : 4) || 4;
+  const weH = parseFloat(document.getElementById('sp-we-hours') ? document.getElementById('sp-we-hours').value : 8) || 8;
   const today = new Date(); today.setHours(0,0,0,0);
   safeSet('sos_study_plan', JSON.stringify({ wdH, weH }));
 
