@@ -2567,6 +2567,161 @@ function calcGrade(){
   res.style.display = 'block';
 }
 
+// STUDY PLANNER
+function calcStudyPlan() {
+  const wdH = parseFloat(document.getElementById('sp-wd-hours').value) || 4;
+  const weH = parseFloat(document.getElementById('sp-we-hours').value) || 8;
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Save inputs
+  safeSet('sos_study_plan', JSON.stringify({ wdH, weH }));
+
+  const results = courses.map(course => {
+    const examDate = course.exam ? new Date(course.exam) : null;
+    const daysLeft = examDate ? Math.max(0, Math.round((examDate - today) / 86400000)) : null;
+
+    // Complexity multiplier based on target grade
+    const grade = parseFloat(course.grade) || 75;
+    const complexityMult = grade >= 90 ? 1.5 : grade >= 75 ? 1.1 : 0.9;
+
+    // Base target hours
+    const targetHours = parseFloat(course.target) || 20;
+    const estimatedTotal = Math.round(targetHours * complexityMult);
+
+    // Already studied — studyLog stores total minutes as a number
+    const logMins = studyLog[course.id] || 0;
+    const studiedHours = Math.round((logMins / 60) * 10) / 10;
+
+    const remaining = Math.max(0, estimatedTotal - studiedHours);
+
+    // Available hours from today to exam
+    let availableHours = 0;
+    let dailyGoal = null;
+    let efficiencyPct = null;
+    if (daysLeft !== null && daysLeft > 0) {
+      for (let i = 0; i < daysLeft; i++) {
+        const d = new Date(today); d.setDate(d.getDate() + i);
+        availableHours += (d.getDay() === 0 || d.getDay() === 6) ? weH : wdH;
+      }
+      dailyGoal = daysLeft > 0 ? Math.round((remaining / daysLeft) * 10) / 10 : 0;
+      efficiencyPct = remaining > 0 ? Math.min(100, Math.round((availableHours / remaining) * 100)) : 100;
+    }
+
+    return { course, examDate, daysLeft, estimatedTotal, studiedHours, remaining, availableHours, dailyGoal, efficiencyPct };
+  });
+
+  renderPlannerResults(results);
+}
+
+function renderPlannerResults(results) {
+  const container = document.getElementById('planner-results');
+  if (!container) return;
+
+  const withExam = results.filter(r => r.examDate);
+  const noExam   = results.filter(r => !r.examDate);
+
+  if (!results.length) {
+    container.innerHTML = '<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:32px 24px;text-align:center;color:#9aa0a6;font-size:13px;">No courses found. Add courses first.</div>';
+    container.style.display = 'block';
+    return;
+  }
+
+  let html = '';
+
+  if (withExam.length) {
+    html += withExam.map(r => {
+      const ci = courses.indexOf(r.course);
+      const emoji = getCourseEmoji(ci);
+      const hex = getCourseHex(ci);
+
+      const effColor = r.efficiencyPct === null ? '#8899aa'
+        : r.efficiencyPct >= 80 ? '#16a34a'
+        : r.efficiencyPct >= 50 ? '#d97706'
+        : '#dc2626';
+      const effBg = r.efficiencyPct === null ? '#f0f3f7'
+        : r.efficiencyPct >= 80 ? '#f0fdf4'
+        : r.efficiencyPct >= 50 ? '#fffbeb'
+        : '#fef2f2';
+
+      const examDateStr = r.examDate
+        ? r.examDate.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})
+        : '—';
+
+      const daysLabel = r.daysLeft === null ? '—'
+        : r.daysLeft === 0 ? 'Today!'
+        : r.daysLeft + ' days';
+
+      const statusHtml = r.efficiencyPct === null
+        ? ''
+        : r.efficiencyPct >= 100
+          ? `<div style="margin-top:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;color:#16a34a;font-size:12px;font-weight:600;">✓ You have enough time to reach your goal!</div>`
+          : `<div style="margin-top:12px;padding:10px 14px;background:${r.efficiencyPct < 50 ? '#fef2f2' : '#fffbeb'};border-radius:8px;color:${r.efficiencyPct < 50 ? '#dc2626' : '#d97706'};font-size:12px;font-weight:600;">⚠️ You are ${Math.round(r.remaining - r.availableHours)}h short — consider reallocating time</div>`;
+
+      const barWidth = r.efficiencyPct !== null ? Math.min(100, r.efficiencyPct) : 0;
+
+      return `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:20px 24px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div style="font-size:16px;font-weight:700;color:#202124;">${emoji} ${esc(r.course.name)}</div>
+          <div style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${effBg};color:${effColor};">${r.efficiencyPct !== null ? r.efficiencyPct + '%' : '—'}</div>
+        </div>
+        <div style="font-size:12px;color:#5f6368;margin-bottom:16px;">Exam: ${examDateStr} · ${daysLabel} left</div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:${hex};">${r.estimatedTotal}h</div>
+            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Estimated</div>
+          </div>
+          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:#16a34a;">${r.studiedHours}h</div>
+            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Studied</div>
+          </div>
+          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:${r.remaining > 0 ? '#dc2626' : '#16a34a'};">${r.remaining}h</div>
+            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Remaining</div>
+          </div>
+          <div style="background:#f4f6f9;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:#0d7a6b;">${r.dailyGoal !== null ? r.dailyGoal + 'h' : '—'}</div>
+            <div style="font-size:10px;font-weight:500;color:#8899aa;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;">Daily Goal</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:500;color:#8899aa;margin-bottom:6px;">
+            <span>Efficiency</span>
+            <span style="color:${effColor};font-weight:700;">${r.efficiencyPct !== null ? r.efficiencyPct + '%' : '—'}</span>
+          </div>
+          <div style="height:8px;background:#f0f3f7;border-radius:6px;overflow:hidden;">
+            <div style="height:100%;width:${barWidth}%;background:${effColor};border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+        </div>
+        ${statusHtml}
+      </div>`;
+    }).join('');
+  }
+
+  if (noExam.length) {
+    html += `<div style="background:white;border-radius:12px;border:1px solid #e0e0e0;padding:16px 24px;">
+      <div style="font-size:13px;font-weight:600;color:#5f6368;margin-bottom:8px;">No exam date set</div>
+      ${noExam.map(r => {
+        const ci = courses.indexOf(r.course);
+        return `<div style="font-size:13px;color:#8899aa;padding:4px 0;">${getCourseEmoji(ci)} ${esc(r.course.name)}</div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+function renderPlanner() {
+  const saved = JSON.parse(safeGet('sos_study_plan', 'null') || 'null');
+  if (saved) {
+    document.getElementById('sp-wd-hours').value = saved.wdH || 4;
+    document.getElementById('sp-we-hours').value = saved.weH || 8;
+    calcStudyPlan();
+  }
+}
+
 // INIT
 // Wire up all modal-triggering buttons via addEventListener (not inline onclick)
 (function() {
