@@ -2910,7 +2910,11 @@ function renderPlanner() {
     }
     if (saved.time && document.getElementById('sp-time'))
       document.getElementById('sp-time').value = saved.time;
-    if (saved.location) selectLocation(saved.location);
+    if (saved.location) {
+      selectLocation(saved.location);
+      const r = document.getElementById('sp-loc-radio-'+saved.location);
+      if (r) r.checked = true;
+    }
   }
 }
 
