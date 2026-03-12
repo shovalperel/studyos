@@ -2926,6 +2926,10 @@ function renderPlanner() {
   // Walkthrough close
   var wtSkip = document.querySelector('.wt-skip');
   if (wtSkip) wtSkip.addEventListener('click', closeWalkthrough);
+  // Location buttons
+  wireBtn('sp-loc-home',    function() { selectLocation('home'); });
+  wireBtn('sp-loc-transit', function() { selectLocation('transit'); });
+  wireBtn('sp-loc-work',    function() { selectLocation('work'); });
 })();
 updatePomoDisplay();
 
