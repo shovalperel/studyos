@@ -2654,22 +2654,8 @@ let _selectedLocation = 'home';
 
 function selectLocation(loc) {
   _selectedLocation = loc;
-  ['home','transit','work'].forEach(function(l) {
-    var el    = document.getElementById('sp-loc-'+l);
-    var check = document.getElementById('sp-loc-'+l+'-check');
-    if (!el) return;
-    if (l === loc) {
-      el.classList.add('selected');
-      el.style.borderColor     = '#0d7a6b';
-      el.style.backgroundColor = '#e8f5f3';
-      if (check) check.style.display = 'inline';
-    } else {
-      el.classList.remove('selected');
-      el.style.borderColor     = '#e0e0e0';
-      el.style.backgroundColor = 'white';
-      if (check) check.style.display = 'none';
-    }
-  });
+  var c = document.getElementById('sp-loc-container');
+  if (c) c.setAttribute('data-location', loc);
 }
 
 function updateEnergyDisplay(val) {
